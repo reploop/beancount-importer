@@ -13,7 +13,7 @@ public class AlipayBillHandler extends BillHandler<AlipayRecord> {
     }
 
     @Override
-    protected AlipayRecord newIns() {
+    protected AlipayRecord newInstance() {
         return new AlipayRecord();
     }
 

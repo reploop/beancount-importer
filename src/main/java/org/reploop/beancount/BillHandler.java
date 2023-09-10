@@ -32,25 +32,23 @@ public abstract class BillHandler<R> extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (TR.equals(qName)) {
-            record = newIns();
+            record = newInstance();
             index = 0;
         }
     }
 
-    protected abstract R newIns();
+    protected abstract R newInstance();
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-        AlipayRecord r;
         var text = new String(ch, start, length).trim();
         var header = headers.get(index);
-        if (!Objects.equals(header, text)) {
+        if (!Objects.equals(header, text) && nonNull(record)) {
             BiConsumer<R, String> consumer = setters.get(index);
             if (nonNull(consumer)) {
                 consumer.accept(record, text);
             }
         }
-        System.out.println(index + "->" + text);
     }
 
     protected boolean validate(R r) {

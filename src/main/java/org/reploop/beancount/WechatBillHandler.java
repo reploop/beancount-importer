@@ -13,7 +13,7 @@ public class WechatBillHandler extends BillHandler<WechatRecord> {
     }
 
     @Override
-    protected WechatRecord newIns() {
+    protected WechatRecord newInstance() {
         return new WechatRecord();
     }
 
