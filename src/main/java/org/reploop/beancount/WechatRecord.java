@@ -12,7 +12,7 @@ public class WechatRecord {
     String category;
     String peer;
     String goods;
-    String type;
+    Type type;
     BigDecimal amount;
     String method;
     String status;

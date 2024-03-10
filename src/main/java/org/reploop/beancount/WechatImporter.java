@@ -40,11 +40,9 @@ public class WechatImporter extends BillImporter<WechatRecord> {
             var elements = method.split("&");
             BigDecimal amount;
             switch (type) {
-                case "支出" -> {
-                    amount = record.getAmount().negate();
-                }
-                case "收入" -> amount = record.getAmount();
-                default -> throw new IllegalStateException(type);
+                case WITHDRAWAL -> amount = record.getAmount().negate();
+                case DEPOSIT -> amount = record.getAmount();
+                default -> throw new IllegalStateException(type.text);
             }
             ;
             var category = record.getCategory();
@@ -63,7 +61,8 @@ public class WechatImporter extends BillImporter<WechatRecord> {
             var peerAccount = ";";
             Posting payee = Posting.builder()
                     .amount(amount.negate())
-                    .account(peerAccount).build();
+                    .account(peerAccount)
+                    .build();
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
                 builder.postings(List.of(payee, payer));
             } else {
@@ -90,11 +89,11 @@ public class WechatImporter extends BillImporter<WechatRecord> {
             case 1 -> WechatRecord::setCategory;
             case 2 -> WechatRecord::setPeer;
             case 3 -> WechatRecord::setGoods;
-            case 4 -> WechatRecord::setType;
+            case 4 -> (record, text) -> record.setType(Type.textOf(text));
             case 5 -> (record, text) -> record.setAmount(new BigDecimal(text.substring(1)));
             case 6 -> WechatRecord::setMethod;
             case 7 -> (record, text) -> {
-                if ("已存入零钱".equals(text) && "收入".equals(record.getType()) && "/".equals(record.getMethod())) {
+                if ("已存入零钱".equals(text) && Type.DEPOSIT == record.getType() && "/".equals(record.getMethod())) {
                     record.setMethod("零钱");
                 }
                 record.setStatus(text);

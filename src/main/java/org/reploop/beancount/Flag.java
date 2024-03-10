@@ -1,6 +1,7 @@
 package org.reploop.beancount;
 
 public enum Flag {
+    OPEN("!"),
     CLOSED("*");
     private final String text;
 

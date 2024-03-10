@@ -18,9 +18,9 @@ public class Importer {
                         try {
                             if (filename.startsWith("alipay_")) {
                                 try {
-                                    alipayImporter.importCsv(path);
+                                    //alipayImporter.importCsv(path);
                                 } catch (Exception e) {
-                                    alipayOldImporter.importCsv(path);
+                                    //alipayOldImporter.importCsv(path);
                                 }
                             } else if (filename.startsWith("微信支付账单")) {
                                 wechatImporter.importCsv(path);
