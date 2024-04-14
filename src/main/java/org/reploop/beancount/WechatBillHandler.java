@@ -2,23 +2,24 @@ package org.reploop.beancount;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import static java.util.Objects.nonNull;
 
-public class WechatBillHandler extends BillHandler<WechatRecord> {
+public class WechatBillHandler extends BillHandler<BillRecord> {
 
-    public WechatBillHandler(List<WechatRecord> records, List<String> headers, Map<Integer, BiConsumer<WechatRecord, String>> setters) {
+    public WechatBillHandler(List<BillRecord> records, Set<Header> headers, Map<Header, BiConsumer<BillRecord, String>> setters) {
         super(records, headers, setters);
     }
 
     @Override
-    protected WechatRecord newInstance() {
-        return new WechatRecord();
+    protected BillRecord newInstance() {
+        return new BillRecord();
     }
 
     @Override
-    protected boolean validate(WechatRecord wechatRecord) {
+    protected boolean validate(BillRecord wechatRecord) {
         return nonNull(wechatRecord.getCreatedAt());
     }
 }

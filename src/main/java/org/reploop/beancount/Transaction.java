@@ -17,6 +17,13 @@ import static java.util.Objects.nonNull;
 @Data
 @Builder
 public class Transaction {
+    private static final String template = """
+            %s %s %s %s
+            ;""";
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private static final String WS = " ";
+    private static Function<String, String> quote = s -> "\"" + s + "\"";
     LocalDateTime dateTime;
     Flag flag;
     String payee;
@@ -25,19 +32,9 @@ public class Transaction {
     Map<String, Object> meta = new HashMap<>();
     List<Posting> postings;
 
-    private static final String template = """
-            %s %s %s %s
-                
-            ;""";
-
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
-
     private <T> StringBuilder append(StringBuilder sb, T val) {
         return append(sb, val, Function.identity());
     }
-
-    private static final String WS = " ";
 
     private <T> void indent(StringBuilder sb, int size) {
         sb.append(WS.repeat(Math.max(0, size)));
@@ -53,8 +50,6 @@ public class Transaction {
     private void newLine(StringBuilder sb) {
         sb.append(System.lineSeparator());
     }
-
-    private static Function<String, String> quote = s -> "\"" + s + "\"";
 
     @Override
     public String toString() {

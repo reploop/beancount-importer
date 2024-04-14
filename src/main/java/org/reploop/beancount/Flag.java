@@ -1,7 +1,8 @@
 package org.reploop.beancount;
 
 public enum Flag {
-    CLOSED("*");
+    CLOSED("*"),
+    PROCESSING("!");
     private final String text;
 
     Flag(String text) {
