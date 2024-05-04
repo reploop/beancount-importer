@@ -2,6 +2,7 @@ package org.reploop.beancount;
 
 import org.reploop.beancount.account.AccountMapping;
 import org.reploop.beancount.account.AccountType;
+import org.reploop.beancount.entity.BillRecord;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;

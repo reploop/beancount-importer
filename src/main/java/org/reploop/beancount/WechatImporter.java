@@ -2,6 +2,7 @@ package org.reploop.beancount;
 
 import org.reploop.beancount.account.AccountMapping;
 import org.reploop.beancount.account.AccountType;
+import org.reploop.beancount.entity.BillRecord;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
@@ -29,11 +30,11 @@ public class WechatImporter extends BillImporter<BillRecord> {
         var transactions = new ArrayList<Transaction>();
         for (var record : records) {
             var type = record.getType();
-            var dateTime = record.createdAt;
+            var dateTime = record.getCreatedAt();
             var builder = Transaction.builder();
             builder.payee(record.getPeer())
                     .flag(Flag.CLOSED)
-                    .dateTime(record.createdAt)
+                    .dateTime(record.getCreatedAt())
                     .narration(record.getGoods())
                     .meta(Map.of("date", dateTime.toLocalDate(), "time", dateTime.toLocalTime()));
             var method = record.getMethod();

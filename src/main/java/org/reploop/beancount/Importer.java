@@ -1,12 +1,20 @@
 package org.reploop.beancount;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@SpringBootApplication
 public class Importer {
     public static void main(String... args) {
+        SpringApplication.run(Importer.class, args);
+    }
+
+    public static void main() {
         AlipayImporter alipayImporter = new AlipayImporter();
         WechatImporter wechatImporter = new WechatImporter();
         Path dir = Paths.get("/Users/gc/Downloads");

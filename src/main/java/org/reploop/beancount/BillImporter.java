@@ -5,6 +5,7 @@ import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
+import org.reploop.beancount.entity.BillRecord;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

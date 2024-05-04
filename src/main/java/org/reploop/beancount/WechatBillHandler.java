@@ -1,5 +1,7 @@
 package org.reploop.beancount;
 
+import org.reploop.beancount.entity.BillRecord;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
