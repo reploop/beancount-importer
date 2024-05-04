@@ -1,5 +1,8 @@
 package org.reploop.beancount;
 
+import org.reploop.beancount.account.AccountMapping;
+import org.reploop.beancount.account.AccountType;
+
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -29,15 +32,18 @@ public class AlipayImporter extends BillImporter<BillRecord> {
                 case INGRESS -> record.getAmount().negate();
                 case EGRESS -> record.getAmount();
             };
+            var account = AccountMapping.account(AccountType.EXPENSES, record.getCategory());
             Posting peer = Posting.builder()
                     .amount(amount)
                     .currency(Currency.CNY)
-                    .account("2")
+                    .account(account)
                     .build();
+            System.out.println(record.getMethod());
+            var v = AccountMapping.account(AccountType.LIABILITIES, record.getMethod());
             Posting payer = Posting.builder()
                     .amount(amount.negate())
                     .currency(Currency.CNY)
-                    .account("8099")
+                    .account(v)
                     .build();
             builder.postings(List.of(peer, payer));
             var tnx = builder.build();

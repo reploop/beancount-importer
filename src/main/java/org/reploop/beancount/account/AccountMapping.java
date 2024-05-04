@@ -116,9 +116,8 @@ public class AccountMapping {
                     "中信银行信用卡(7661)":"Liabilities:CreditCard:CITIC:7661",
                     "浦发银行(0083)":"Liabilities:CreditCard:SPD:0083",     
                     "浦发银行信用卡(0083)":"Liabilities:CreditCard:SPD:0083",        
-                    "浦发银行(0083)":"Liabilities:CreditCard:SPD:0083"          
-                },
-                "expenses": {
+                    "浦发银行(0083)":"Liabilities:CreditCard:SPD:0083",        
+                    "广发银行信用卡(2893)":"Liabilities:CreditCard:CGB:2893"          
                 }
             }
             """;
