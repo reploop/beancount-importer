@@ -3,6 +3,7 @@ package org.reploop.beancount;
 import org.reploop.beancount.account.AccountMapping;
 import org.reploop.beancount.account.AccountType;
 import org.reploop.beancount.entity.BillRecord;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
@@ -15,7 +16,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-public class AlipayImporter extends BillImporter<BillRecord> {
+@Component
+public class AlipayImporter extends BillImporter {
 
     public void importCsv(Path path) throws Exception {
         var headers = EnumSet.allOf(Header.class);

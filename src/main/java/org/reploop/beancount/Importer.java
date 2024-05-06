@@ -1,20 +1,24 @@
 package org.reploop.beancount;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
-@SpringBootApplication
-public class Importer {
-    public static void main(String... args) {
-        SpringApplication.run(Importer.class, args);
+@Component
+public class Importer implements InitializingBean {
+
+    private final List<BillImporter> importers;
+
+    public Importer(List<BillImporter> importers) {
+        this.importers = importers;
     }
 
-    public static void main() {
+    public void run() {
         AlipayImporter alipayImporter = new AlipayImporter();
         WechatImporter wechatImporter = new WechatImporter();
         Path dir = Paths.get("/Users/gc/Downloads");
@@ -36,5 +40,10 @@ public class Importer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        run();
     }
 }

@@ -18,25 +18,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-public abstract class BillImporter<R extends BillRecord> {
+public abstract class BillImporter {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    abstract BiConsumer<R, String> setter(Header name);
+    abstract BiConsumer<BillRecord, String> setter(Header name);
 
-    public List<R> importCsv(Set<Header> headers, Path path) throws Exception {
-        Map<Header, BiConsumer<R, String>> setters = new HashMap<>();
+    public List<BillRecord> importCsv(Set<Header> headers, Path path) throws Exception {
+        Map<Header, BiConsumer<BillRecord, String>> setters = new HashMap<>();
         for (var header : headers) {
-            BiConsumer<R, String> consumer = setter(header);
+            BiConsumer<BillRecord, String> consumer = setter(header);
             setters.put(header, consumer);
         }
-        List<R> records = new ArrayList<>();
+        List<BillRecord> records = new ArrayList<>();
         AutoDetectParser parser = new AutoDetectParser();
         ParseContext context = new ParseContext();
         Metadata metadata = new Metadata();
         metadata.set(TikaCoreProperties.CONTENT_TYPE_PARSER_OVERRIDE, MediaType.text("csv").toString());
         parser.parse(Files.newInputStream(path), billHandler(records, headers, setters), metadata, context);
         System.out.println(records.size());
-        return records.stream().sorted(Comparator.comparing(BillRecord::getCreatedAt)).toList();
+        return records.stream().sorted(Comparator.comparing(org.reploop.beancount.entity.BillRecord::getCreatedAt)).toList();
     }
 
     Type parse(String text) {
@@ -47,5 +47,5 @@ public abstract class BillImporter<R extends BillRecord> {
         };
     }
 
-    abstract BillHandler<R> billHandler(List<R> records, Set<Header> headers, Map<Header, BiConsumer<R, String>> setters);
+    abstract BillHandler<BillRecord> billHandler(List<BillRecord> records, Set<Header> headers, Map<Header, BiConsumer<BillRecord, String>> setters);
 }

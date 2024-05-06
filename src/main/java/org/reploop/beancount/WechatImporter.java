@@ -3,6 +3,7 @@ package org.reploop.beancount;
 import org.reploop.beancount.account.AccountMapping;
 import org.reploop.beancount.account.AccountType;
 import org.reploop.beancount.entity.BillRecord;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
@@ -17,7 +18,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-public class WechatImporter extends BillImporter<BillRecord> {
+@Component
+public class WechatImporter extends BillImporter {
 
     private Map<String, String> cate;
 

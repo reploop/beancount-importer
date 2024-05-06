@@ -1,5 +1,6 @@
 package org.reploop.beancount.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class BillRecord {
     String method;
     String status;
     @Id
+    @Column(name = "`order`")
     String order;
     String merchantOrder;
     String comment;
