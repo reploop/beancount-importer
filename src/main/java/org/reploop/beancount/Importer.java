@@ -52,11 +52,13 @@ public class Importer implements InitializingBean {
                     .filter(csvFilter)
                     .collect(Collectors.groupingBy(path -> {
                         var filename = filename(path);
-                        return switch (filename) {
-                            case "alipay_" -> Source.ALIPAY;
-                            case "微信支付账单" -> Source.WECHAT;
-                            default -> Source.UNKNOWN;
-                        };
+                        if (filename.startsWith("alipay_")) {
+                            return Source.ALIPAY;
+                        } else if (filename.startsWith("微信支付账单")) {
+                            return Source.WECHAT;
+                        } else {
+                            return Source.UNKNOWN;
+                        }
                     }));
             run(sources);
         } catch (IOException e) {
