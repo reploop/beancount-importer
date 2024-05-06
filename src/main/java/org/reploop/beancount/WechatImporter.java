@@ -21,12 +21,7 @@ import java.util.function.BiConsumer;
 @Component
 public class WechatImporter extends BillImporter {
 
-    private Map<String, String> cate;
-
-    public static void main(String... args) throws Exception {
-        WechatImporter importer = new WechatImporter();
-    }
-
+    @Override
     public void importCsv(Path path) throws Exception {
         var records = super.importCsv(EnumSet.allOf(Header.class), path);
         var transactions = new ArrayList<Transaction>();
@@ -74,6 +69,11 @@ public class WechatImporter extends BillImporter {
         for (var txn : transactions) {
             System.out.println(txn);
         }
+    }
+
+    @Override
+    boolean support(Source source) {
+        return source == Source.WECHAT;
     }
 
     @Override

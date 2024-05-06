@@ -1,5 +1,6 @@
 package org.reploop.beancount;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class Importer implements InitializingBean {
 
@@ -18,25 +23,42 @@ public class Importer implements InitializingBean {
         this.importers = importers;
     }
 
-    public void run() {
-        AlipayImporter alipayImporter = new AlipayImporter();
-        WechatImporter wechatImporter = new WechatImporter();
-        Path dir = Paths.get("/Users/gc/Downloads");
-        try (var s = Files.list(dir)) {
-            s.filter(Files::isReadable)
-                    .forEach(path -> {
-                        var filename = path.getFileName().toString();
+    private void run(Map<Source, List<Path>> sources) {
+        sources.forEach((source, paths) -> {
+            for (var importer : importers) {
+                if (importer.support(source)) {
+                    for (var path : paths) {
                         try {
-                            if (filename.startsWith("alipay_")) {
-                                alipayImporter.importCsv(path);
-                            } else if (filename.startsWith("微信支付账单")) {
-                                wechatImporter.importCsv(path);
-                            }
+                            importer.importCsv(path);
                         } catch (Exception e) {
-                            System.err.println(path);
-                            e.printStackTrace();
+                            log.error("Path {}", path, e);
                         }
-                    });
+                    }
+                }
+            }
+        });
+    }
+
+    private String filename(Path path) {
+        return path.getFileName().toString();
+    }
+
+    private final Predicate<Path> csvFilter = path -> filename(path).endsWith(".csv");
+
+    public void run() {
+        Path dir = Paths.get("/Users/gc/Downloads");
+        try (var list = Files.list(dir)) {
+            var sources = list.filter(Files::isReadable)
+                    .filter(csvFilter)
+                    .collect(Collectors.groupingBy(path -> {
+                        var filename = filename(path);
+                        return switch (filename) {
+                            case "alipay_" -> Source.ALIPAY;
+                            case "微信支付账单" -> Source.WECHAT;
+                            default -> Source.UNKNOWN;
+                        };
+                    }));
+            run(sources);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

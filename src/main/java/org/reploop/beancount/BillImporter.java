@@ -21,6 +21,10 @@ import java.util.function.BiConsumer;
 public abstract class BillImporter {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    public abstract void importCsv(Path path) throws Exception;
+
+    abstract boolean support(Source source);
+
     abstract BiConsumer<BillRecord, String> setter(Header name);
 
     public List<BillRecord> importCsv(Set<Header> headers, Path path) throws Exception {

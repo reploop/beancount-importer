@@ -19,6 +19,7 @@ import java.util.function.BiConsumer;
 @Component
 public class AlipayImporter extends BillImporter {
 
+    @Override
     public void importCsv(Path path) throws Exception {
         var headers = EnumSet.allOf(Header.class);
         var records = importCsv(headers, path);
@@ -66,6 +67,11 @@ public class AlipayImporter extends BillImporter {
                 .sorted()
                 .distinct().toList();
         System.out.println(payee);
+    }
+
+    @Override
+    boolean support(Source source) {
+        return source == Source.ALIPAY;
     }
 
     @Override
