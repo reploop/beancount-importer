@@ -7,9 +7,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import static java.util.Objects.nonNull;
@@ -24,13 +27,20 @@ public class Transaction {
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static final String WS = " ";
     private static Function<String, String> quote = s -> "\"" + s + "\"";
-    LocalDateTime dateTime;
-    Flag flag;
-    String payee;
-    String narration;
+    private LocalDateTime dateTime;
+    private Flag flag;
+    private String payee;
+    private String narration;
     @Builder.Default
-    Map<String, Object> meta = new HashMap<>();
-    List<Posting> postings;
+    private Map<String, Object> meta = new HashMap<>();
+    private List<Posting> postings;
+    @Builder.Default
+    private Set<String> ignoreKeys = new HashSet<>();
+
+    public Transaction addIgnoreKeys(String... keys) {
+        ignoreKeys.addAll(Arrays.asList(keys));
+        return this;
+    }
 
     private <T> StringBuilder append(StringBuilder sb, T val) {
         return append(sb, val, Function.identity());
@@ -45,6 +55,10 @@ public class Transaction {
             indent(sb, 1);
         }
         return sb.append(func.apply(val));
+    }
+
+    public <T> T getMetaValue(String k, Class<T> clazz) {
+        return clazz.cast(meta.get(k));
     }
 
     private void newLine(StringBuilder sb) {
@@ -62,26 +76,27 @@ public class Transaction {
         // meta
         if (nonNull(meta)) {
             meta.forEach((name, value) -> {
-                indent(sb, 2);
-                sb.append(name);
-                append(sb, ":");
-                if (value instanceof LocalDate ld) {
-                    append(sb, ld.format(DATE_FORMAT));
-                } else if (value instanceof LocalTime lt) {
-                    append(sb, lt.format(TIME_FORMAT), quote);
-                } else {
-                    sb.append(value);
+                if (!ignoreKeys.contains(name)) {
+                    indent(sb, 2);
+                    sb.append(name).append(":");
+                    if (value instanceof LocalDate ld) {
+                        append(sb, ld.format(DATE_FORMAT));
+                    } else if (value instanceof LocalTime lt) {
+                        append(sb, lt.format(TIME_FORMAT), quote);
+                    } else {
+                        sb.append(value);
+                    }
+                    newLine(sb);
                 }
-                newLine(sb);
             });
         }
         // posting
         if (nonNull(postings)) {
             for (Posting posting : postings) {
                 indent(sb, 2);
-                sb.append(posting.account);
-                append(sb, posting.amount);
-                append(sb, posting.currency);
+                sb.append(posting.getAccount());
+                append(sb, posting.getAmount());
+                append(sb, posting.getCurrency());
                 newLine(sb);
             }
         }

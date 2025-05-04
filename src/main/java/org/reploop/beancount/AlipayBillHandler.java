@@ -46,6 +46,6 @@ public class AlipayBillHandler extends BillHandler<BillRecord> {
 
     @Override
     protected boolean validate(BillRecord record) {
-        return nonNull(record.getCreatedAt());
+        return nonNull(record.getCreatedAt()) && record.getAmount().compareTo(BigDecimal.ZERO) > 0;
     }
 }

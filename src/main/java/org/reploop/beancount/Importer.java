@@ -51,7 +51,7 @@ public class Importer implements InitializingBean {
                 (path, attrs) -> attrs.isRegularFile() && csvFilter.test(path))) {
             var sources = list.collect(Collectors.groupingBy(path -> {
                 var filename = filename(path);
-                if (filename.startsWith("alipay_")) {
+                if (filename.startsWith("alipay_") || filename.startsWith("支付宝交易明细")) {
                     return Source.ALIPAY;
                 } else if (filename.startsWith("微信支付账单")) {
                     return Source.WECHAT;

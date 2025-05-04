@@ -8,8 +8,8 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class Posting {
-    String account;
-    BigDecimal amount;
+    private String account;
+    private BigDecimal amount;
     @Builder.Default
-    Currency currency = Currency.CNY;
+    private Currency currency = Currency.CNY;
 }
