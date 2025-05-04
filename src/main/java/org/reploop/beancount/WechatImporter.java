@@ -18,6 +18,10 @@ public class WechatImporter extends BillImporter {
 
     private static final Pattern pattern = Pattern.compile("已退款\\(￥([\\d.]+)\\)");
 
+    protected WechatImporter() {
+        super(Source.WECHAT);
+    }
+
     @Override
     public void process(Path path) throws Exception {
         var records = importCsv(path);
@@ -110,16 +114,7 @@ public class WechatImporter extends BillImporter {
             }
             transactions.add(txn.addIgnoreKeys(STATUS_KEY));
         }
-        System.out.println();
-        for (var txn : transactions) {
-            System.out.println(txn);
-        }
-    }
-
-
-    @Override
-    boolean support(Source source) {
-        return source == Source.WECHAT;
+        output(transactions);
     }
 
     @Override

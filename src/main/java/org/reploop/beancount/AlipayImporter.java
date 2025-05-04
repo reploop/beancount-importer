@@ -20,6 +20,10 @@ public class AlipayImporter extends BillImporter {
 
     private static final String ORDER_NO_KEY = "order";
 
+    protected AlipayImporter() {
+        super(Source.ALIPAY);
+    }
+
     @Override
     public void process(Path path) throws Exception {
         var records = importCsv(path);
@@ -42,7 +46,6 @@ public class AlipayImporter extends BillImporter {
                     .currency(Currency.CNY)
                     .account(account)
                     .build();
-            System.out.println(record.getMethod());
             var paymentMethod = record.getMethod().split("&")[0];
             var v = searchAccount(EnumSet.of(AccountType.LIABILITIES, AccountType.ASSETS), paymentMethod).orElse("------");
             Posting payer = Posting.builder()
@@ -74,12 +77,7 @@ public class AlipayImporter extends BillImporter {
             }
             transactions.put(record.getOrder(), tnx.addIgnoreKeys(ORDER_NO_KEY));
         }
-        transactions.values().forEach(System.out::println);
-    }
-
-    @Override
-    boolean support(Source source) {
-        return source == Source.ALIPAY;
+        output(transactions.values());
     }
 
     @Override
