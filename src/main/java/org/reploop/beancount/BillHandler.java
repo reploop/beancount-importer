@@ -4,22 +4,21 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiConsumer;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 public abstract class BillHandler<R> extends DefaultHandler {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final String TD = "td";
     private static final String TR = "tr";
 
     private final List<R> records;
-    private final Set<Header> headers;
-    private final Map<Header, BiConsumer<R, String>> setters;
     private final Map<Integer, Header> indexedHeader = new HashMap<>();
     private R record;
     private int columnIndex = 0;
@@ -29,10 +28,8 @@ public abstract class BillHandler<R> extends DefaultHandler {
      */
     private int matches = Integer.MAX_VALUE;
 
-    public BillHandler(List<R> records, Set<Header> headers, Map<Header, BiConsumer<R, String>> setters) {
+    public BillHandler(List<R> records) {
         this.records = records;
-        this.setters = setters;
-        this.headers = headers;
     }
 
     @Override
@@ -50,7 +47,7 @@ public abstract class BillHandler<R> extends DefaultHandler {
     public void characters(char[] ch, int start, int length) throws SAXException {
         var text = new String(ch, start, length).trim();
         Header header;
-        if (rowIndex <= matches && nonNull(header = Header.findByText(text)) && headers.contains(header)) {
+        if (rowIndex <= matches && nonNull(header = Header.findByText(text))) {
             matches = rowIndex;
             indexedHeader.put(columnIndex, header);
         }
@@ -59,12 +56,22 @@ public abstract class BillHandler<R> extends DefaultHandler {
             if (isNull(header)) {
                 throw new IllegalStateException(text);
             }
-            BiConsumer<R, String> consumer = setters.get(header);
+            BiConsumer<R, String> consumer = getSetter(header);
             if (nonNull(consumer)) {
                 consumer.accept(record, text);
             }
         }
     }
+
+    Type parse(String text) {
+        return switch (text) {
+            case "不计收支", "收入" -> Type.INGRESS;
+            case "支出" -> Type.EGRESS;
+            default -> throw new IllegalStateException(text);
+        };
+    }
+
+    protected abstract BiConsumer<R, String> getSetter(Header header);
 
     protected boolean validate(R r) {
         return nonNull(r);

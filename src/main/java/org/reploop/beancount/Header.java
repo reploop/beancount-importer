@@ -5,6 +5,10 @@ import java.util.Set;
 
 import static java.util.Objects.nonNull;
 
+/**
+ * 交易时间	交易类型	交易对方	商品	收/支	金额(元)	支付方式	当前状态	交易单号	商户单号	备注
+ * 交易时间	交易分类	交易对方	对方账号	商品说明	收/支	金额	收/付款方式	交易状态	交易订单号	商家订单号	备注
+ */
 public enum Header {
     CREATED_AT("交易时间"),
     CATEGORY("交易分类", "交易类型"),

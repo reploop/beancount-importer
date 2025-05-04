@@ -29,7 +29,7 @@ public class Importer implements InitializingBean {
                 if (importer.support(source)) {
                     for (var path : paths) {
                         try {
-                            importer.importCsv(path);
+                            importer.process(path);
                         } catch (Exception e) {
                             log.error("Path {}", path, e);
                         }
@@ -46,20 +46,19 @@ public class Importer implements InitializingBean {
     private final Predicate<Path> csvFilter = path -> filename(path).endsWith(".csv");
 
     public void run() {
-        Path dir = Paths.get("/Users/gc/Downloads");
-        try (var list = Files.list(dir)) {
-            var sources = list.filter(Files::isReadable)
-                    .filter(csvFilter)
-                    .collect(Collectors.groupingBy(path -> {
-                        var filename = filename(path);
-                        if (filename.startsWith("alipay_")) {
-                            return Source.ALIPAY;
-                        } else if (filename.startsWith("微信支付账单")) {
-                            return Source.WECHAT;
-                        } else {
-                            return Source.UNKNOWN;
-                        }
-                    }));
+        Path dir = Paths.get("/Users/george/Downloads");
+        try (var list = Files.find(dir, Integer.MAX_VALUE,
+                (path, attrs) -> attrs.isRegularFile() && csvFilter.test(path))) {
+            var sources = list.collect(Collectors.groupingBy(path -> {
+                var filename = filename(path);
+                if (filename.startsWith("alipay_")) {
+                    return Source.ALIPAY;
+                } else if (filename.startsWith("微信支付账单")) {
+                    return Source.WECHAT;
+                } else {
+                    return Source.UNKNOWN;
+                }
+            }));
             run(sources);
         } catch (IOException e) {
             throw new RuntimeException(e);
