@@ -75,20 +75,23 @@ public class Transaction {
         newLine(sb);
         // meta
         if (nonNull(meta)) {
-            meta.forEach((name, value) -> {
-                if (!ignoreKeys.contains(name)) {
-                    indent(sb, 2);
-                    sb.append(name).append(":");
-                    if (value instanceof LocalDate ld) {
-                        append(sb, ld.format(DATE_FORMAT));
-                    } else if (value instanceof LocalTime lt) {
-                        append(sb, lt.format(TIME_FORMAT), quote);
-                    } else {
-                        sb.append(value);
-                    }
-                    newLine(sb);
+            var keys = meta.keySet().stream()
+                    .filter(k -> !ignoreKeys.contains(k))
+                    .sorted()
+                    .toList();
+            for (var name : keys) {
+                var value = meta.get(name);
+                indent(sb, 2);
+                sb.append(name).append(":");
+                if (value instanceof LocalDate ld) {
+                    append(sb, ld.format(DATE_FORMAT));
+                } else if (value instanceof LocalTime lt) {
+                    append(sb, lt.format(TIME_FORMAT), quote);
+                } else {
+                    sb.append(value);
                 }
-            });
+                newLine(sb);
+            }
         }
         // posting
         if (nonNull(postings)) {

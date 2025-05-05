@@ -27,12 +27,10 @@ public class Importer implements InitializingBean {
         sources.forEach((source, paths) -> {
             for (var importer : importers) {
                 if (importer.support(source)) {
-                    for (var path : paths) {
-                        try {
-                            importer.process(path);
-                        } catch (Exception e) {
-                            log.error("Path {}", path, e);
-                        }
+                    try {
+                        importer.process(paths);
+                    } catch (Exception e) {
+                        log.error("Path {}", paths, e);
                     }
                 }
             }

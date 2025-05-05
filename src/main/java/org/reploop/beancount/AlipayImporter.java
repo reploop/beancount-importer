@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,9 +25,9 @@ public class AlipayImporter extends BillImporter {
     }
 
     @Override
-    public void process(Path path) throws Exception {
-        var records = importCsv(path);
-        Map<String, Transaction> transactions = new HashMap<>();
+    public void process(List<Path> paths) throws Exception {
+        var records = importCsv(paths);
+        Map<String, Transaction> transactions = new LinkedHashMap<>();
         for (var record : records) {
             var dateTime = record.getCreatedAt();
             var builder = Transaction.builder();
@@ -40,7 +40,7 @@ public class AlipayImporter extends BillImporter {
                 case INGRESS -> record.getAmount().negate();
                 case EGRESS -> record.getAmount();
             };
-            var account = searchAccount(record.getCategory(), record.getPeer()).orElse("------");
+            var account = searchAccount(record.getCategory(), first(record.getPeer()), record.getPeer(), first(record.getGoods()), record.getGoods()).orElse("------");
             Posting peer = Posting.builder()
                     .amount(amount)
                     .currency(Currency.CNY)
@@ -58,9 +58,9 @@ public class AlipayImporter extends BillImporter {
             var category = record.getCategory();
             if (Objects.equals(REFUND, category)) {
                 var fullOrderNo = record.getOrder();
-                var index = fullOrderNo.indexOf("_");
-                if (index > 0) {
-                    var paymentOrder = fullOrderNo.substring(0, index);
+                var elements = fullOrderNo.split("[_*]+");
+                if (elements.length > 1) {
+                    var paymentOrder = elements[0];
                     var transaction = transactions.get(paymentOrder);
                     if (nonNull(transaction)) {
                         var ps = transaction.getPostings().stream()

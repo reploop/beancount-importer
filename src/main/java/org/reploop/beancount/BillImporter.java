@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -62,10 +63,23 @@ public abstract class BillImporter {
         });
     }
 
-    public abstract void process(Path path) throws Exception;
+    public void process(Path path) throws Exception {
+        process(List.of(path));
+    }
+
+    public abstract void process(List<Path> path) throws Exception;
 
     boolean support(Source source) {
         return this.source == source;
+    }
+
+    public List<BillRecord> importCsv(List<Path> paths) throws Exception {
+        List<BillRecord> records = new ArrayList<>();
+        for (var path : paths) {
+            records.addAll(importCsv(path));
+        }
+        records.sort(Comparator.comparing(BillRecord::getCreatedAt));
+        return records;
     }
 
     public List<BillRecord> importCsv(Path path) throws Exception {
@@ -77,7 +91,7 @@ public abstract class BillImporter {
         metadata.set(TikaCoreProperties.CONTENT_TYPE_USER_OVERRIDE, "text/csv;delimiter=,");
         parser.parse(Files.newInputStream(path), billHandler(records), metadata, context);
         System.out.println(records.size());
-        return records.stream().sorted(Comparator.comparing(org.reploop.beancount.entity.BillRecord::getCreatedAt)).toList();
+        return records.stream().sorted(Comparator.comparing(BillRecord::getCreatedAt)).toList();
     }
 
     protected BigDecimal reverse(BigDecimal amount, BigDecimal refund) {
@@ -101,18 +115,24 @@ public abstract class BillImporter {
         return Optional.empty();
     }
 
+    protected static final Pattern stop = Pattern.compile("[-\\s（）()，,]+");
+
+    protected String[] segment(String val) {
+        return stop.split(val);
+    }
+
     protected String first(String val) {
-        return val.split("-")[0];
+        return val.split("[-\\s（）()，,]+")[0];
     }
 
 
     Map<Path, List<Transaction>> outputFile(Collection<Transaction> transactions) {
         Map<Integer, List<Transaction>> yearMap = transactions.stream().collect(Collectors.groupingBy(t -> t.getDateTime().getYear(), Collectors.toList()));
         Map<Path, List<Transaction>> pathMap = new HashMap<>();
-        yearMap.forEach((year, transactions1) -> {
+        yearMap.forEach((year, list) -> {
             int max = Integer.MIN_VALUE;
             int min = Integer.MAX_VALUE;
-            for (var txn : transactions1) {
+            for (var txn : list) {
                 var datetime = txn.getDateTime();
                 var month = datetime.getMonthValue();
                 if (month > max) {
@@ -125,7 +145,7 @@ public abstract class BillImporter {
             var prefix = source.name().toLowerCase();
             var filename = String.format("%s_%02d_%02d.beancount", prefix, min, max);
             var path = outputDirectory.resolve(String.valueOf(year)).resolve(filename);
-            pathMap.put(path, transactions1);
+            pathMap.put(path, list);
         });
         return pathMap;
     }
