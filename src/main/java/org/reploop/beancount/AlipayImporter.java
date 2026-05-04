@@ -58,6 +58,7 @@ public class AlipayImporter extends BillImporter<AlipayRecord> {
 
     @Override
     BillHandler<AlipayRecord> billHandler(List<AlipayRecord> records, List<String> headers, Map<Integer, BiConsumer<AlipayRecord, String>> setters) {
+        // Will fall back to older version
         return new AlipayBillHandler(records, headers, setters);
     }
 }
