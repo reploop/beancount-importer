@@ -11,12 +11,8 @@ import java.util.function.BiConsumer;
 
 public class AlipayImporter extends BillImporter<AlipayRecord> {
 
-    public static void main(String... args) throws Exception {
-        AlipayImporter importer = new AlipayImporter();
-    }
-
     public void importCsv(Path path) throws Exception {
-        var l = Arrays.stream("收/支\t交易对方\t对方账号\t商品说明\t收/付款方式\t金额\t交易状态\t交易分类\t交易订单号\t商家订单号\t交易时间\t".split("\\s+")).toList();
+        //交易时间	交易分类	交易对方	对方账号	商品说明	收/支	金额	收/付款方式	交易状态	交易订单号	商家订单号	备注
         var headers = Arrays.stream("交易时间	交易分类	交易对方	对方账号	商品说明	收/支	金额	收/付款方式	交易状态	交易订单号	商家订单号	备注".split("\\s+")).toList();
         var records = super.importCsv(headers, path);
         for (var record : records) {

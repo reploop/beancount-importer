@@ -9,21 +9,26 @@ public class Importer {
     public static void main(String... args) {
         AlipayImporter alipayImporter = new AlipayImporter();
         AlipayOldImporter alipayOldImporter = new AlipayOldImporter();
-        WechatImporter wechatImporter = new WechatImporter();
+        WechatCsvImporter csvImporter = new WechatCsvImporter();
+        WechatXlsxImporter xlsxImporter = new WechatXlsxImporter();
         Path dir = Paths.get("/Users/george/personal-projects/beancount/bills");
         try (var s = Files.list(dir)) {
             s.filter(Files::isReadable)
                     .forEach(path -> {
                         var filename = path.getFileName().toString();
                         try {
-                            if (filename.startsWith("alipay_")) {
+                            if (filename.startsWith("支付宝交易明细")) {
                                 try {
-                                    //alipayImporter.importCsv(path);
+                                    alipayImporter.importCsv(path);
                                 } catch (Exception e) {
-                                    //alipayOldImporter.importCsv(path);
+                                    alipayOldImporter.importCsv(path);
                                 }
                             } else if (filename.startsWith("微信支付账单")) {
-                                wechatImporter.importCsv(path);
+                                if (filename.endsWith(".xlsx")) {
+                                    //xlsxImporter.importBill(path);
+                                } else if (filename.endsWith(".csv")) {
+                                    //csvImporter.importBill(path);
+                                }
                             }
                         } catch (Exception e) {
                             System.err.println(path);

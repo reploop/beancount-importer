@@ -4,8 +4,9 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public enum Type {
-    DEPOSIT("收入"),
-    WITHDRAWAL("支出"),
+    INCOME("收入"),
+    EXPENSE("支出"),
+    OTHER("其他"),
     NOT_APPLICABLE("不计入收支");
     final String text;
 

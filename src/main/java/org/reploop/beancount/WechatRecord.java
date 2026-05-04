@@ -11,7 +11,7 @@ public class WechatRecord {
     LocalDateTime createdAt;
     String category;
     String peer;
-    String goods;
+    String  goods;
     Type type;
     BigDecimal amount;
     String method;
@@ -19,4 +19,8 @@ public class WechatRecord {
     String order;
     String merchantOrder;
     String comment;
+
+    public void setDoubleAmount(Double amount) {
+        this.amount = BigDecimal.valueOf(amount);
+    }
 }

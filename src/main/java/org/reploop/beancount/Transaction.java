@@ -27,7 +27,7 @@ public class Transaction {
 
     private static final String template = """
             %s %s %s %s
-                
+            
             ;""";
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -68,8 +68,7 @@ public class Transaction {
         if (nonNull(meta)) {
             meta.forEach((name, value) -> {
                 indent(sb, 2);
-                sb.append(name);
-                append(sb, ":");
+                sb.append(name).append(":");
                 if (value instanceof LocalDate ld) {
                     append(sb, ld.format(DATE_FORMAT));
                 } else if (value instanceof LocalTime lt) {
