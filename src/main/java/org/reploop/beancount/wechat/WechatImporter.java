@@ -1,11 +1,17 @@
-package org.reploop.beancount;
+package org.reploop.beancount.wechat;
 
+import org.reploop.beancount.BillImporter;
+import org.reploop.beancount.Flag;
+import org.reploop.beancount.Posting;
+import org.reploop.beancount.ReverseKey;
+import org.reploop.beancount.Transaction;
+import org.reploop.beancount.Type;
 import org.reploop.beancount.account.AccountMapping;
 import org.reploop.beancount.account.AccountType;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
@@ -19,7 +25,7 @@ import java.util.regex.Pattern;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-public abstract class WechatImporter extends BillImporter<WechatRecord> {
+public abstract class WechatImporter implements BillImporter {
 
     private static final Pattern PART_REVERSE_PATTERN = Pattern.compile("已退款\\((¥[\\d.]+)\\)");
 
@@ -48,7 +54,7 @@ public abstract class WechatImporter extends BillImporter<WechatRecord> {
             switch (type) {
                 case EXPENSE -> amount = r.getAmount().negate();
                 case INCOME -> amount = r.getAmount();
-                default -> throw new IllegalStateException(type.text);
+                default -> throw new IllegalStateException(type.toString());
             }
 
             // It's always your assets or liabilities
@@ -158,8 +164,11 @@ public abstract class WechatImporter extends BillImporter<WechatRecord> {
         return transactions;
     }
 
-    private List<String> segment(String val) {
-        var values = val.split("[\\s-_&（）·:，|]+");
-        return Arrays.stream(values).map(String::trim).sorted((o1, o2) -> Integer.compare(o2.length(), o1.length())).toList();
+    @Override
+    public boolean support(Path path) {
+        var filename = path.getFileName().toString();
+        return filename.startsWith("微信支付账单") && supportExtension(filename);
     }
+
+    abstract boolean supportExtension(String filename);
 }

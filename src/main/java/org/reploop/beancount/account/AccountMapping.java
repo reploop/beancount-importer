@@ -1,9 +1,9 @@
 package org.reploop.beancount.account;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+
+import tools.jackson.core.json.JsonReadFeature;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Collections;
 import java.util.Map;
@@ -17,6 +17,7 @@ public class AccountMapping {
                     "中信银行储蓄卡(6659)": "Assets:Card:CITIC:6659",
                     "浦发银行储蓄卡(3009)": "Assets:Card:SPD:3009",
                     "招商银行储蓄卡(2459)": "Assets:Card:CMB:2459",
+                    "招商银行储蓄卡(5407)": "Assets:Card:CMB:5407",
                     "零钱": "Assets:WeChat:Pocket"
                 },
                 "expenses": {
@@ -49,15 +50,18 @@ public class AccountMapping {
                         "投资理财": "Expenses:Investment",
                         "美团金融服务": "Expenses:Investment",
                         "文化休闲": "Expenses:CultureLeisure",
+                        "北京帝凯乐KTV": "Expenses:CultureLeisure",
                         "厦门亦翰文化传播有限公司北京分公司": "Expenses:CultureLeisure",
                         "中国青少年社会服务中心有限责任公司": "Expenses:CultureLeisure",
                         "三亚大小洞天发展有限公司临春岭分公司": "Expenses:CultureLeisure",
                         "北京市海淀区圆明园旅游服务公司": "Expenses:CultureLeisure",
                         "圆明园": "Expenses:CultureLeisure",
+                        "北京动物园": "Expenses:CultureLeisure",
                         "蟒山国家森林公园": "Expenses:CultureLeisure",
                         "亚马逊电子书包月服务": "Expenses:CultureLeisure:Books",
                         "日用百货": "Expenses:DailyNecessities",
                         "美宜佳": "Expenses:DailyNecessities",
+                        "象房商亭": "Expenses:DailyNecessities",
                         "快乐甜甜": "Expenses:DailyNecessities",
                         "信德诺中心": "Expenses:DailyNecessities",
                         "清雅售货机": "Expenses:DailyNecessities",
@@ -70,11 +74,15 @@ public class AccountMapping {
                         "小麦智能售货机": "Expenses:DailyNecessities",
                         "安吉智能芝麻店": "Expenses:DailyNecessities",
                         "便利店东王庄店": "Expenses:DailyNecessities",
+                        "服饰内衣": "Expenses:DressUp:Clothing",
+                        "鞋服箱包": "Expenses:DressUp",
+                        "运动户外": "Expenses:OutdoorSports",
                         "爱车养车": "Expenses:CarCare",
                         "京NB9Z20停车缴费": "Expenses:CarCare",
                         "停车费": "Expenses:CarCare",
                         "平凉城投惠民停车": "Expenses:CarCare",
                         "P云停车平台": "Expenses:CarCare",
+                        "北京静态交通投资运营有限公司": "Expenses:CarCare",
                         "北京速通科技有限公司": "Expenses:CarCare",
                         "个人所得税": "Expenses:Payment",
                         "北京市顺义区城市管理委员会": "Expenses:CarCare",
@@ -85,11 +93,17 @@ public class AccountMapping {
                         "ETCP停车": "Expenses:CarCare",
                         "国安停车": "Expenses:CarCare",
                         "京NB9Z20": "Expenses:CarCare",
+                        "NB9Z20": "Expenses:CarCare",
                         "闪充行": "Expenses:Transportation:ChargingFee",
+                        "智行物联": "Expenses:Transportation:ChargingFee",
+                        "张石高速野狐岭站": "Expenses:Transportation:Toll",
+                        "内蒙古蒙马新能源有限公司": "Expenses:Transportation:ChargingFee",
                         "小绿人充电": "Expenses:Transportation:ChargingFee",
                         "北京元易充能源有限公司": "Expenses:Transportation:ChargingFee",
                         "北京华阳风科技有限公司": "Expenses:Transportation:ChargingFee",
                         "座享科技": "Expenses:Transportation:BikeSharingFee",
+                        "单车": "Expenses:Transportation:BikeSharingFee",
+                        "闪送": "Expenses:Transportation",
                         "好停车服务": "Expenses:CarCare",
                         "瑞海花园客服中心": "Expenses:CarCare",
                         "生活服务": "Expenses:LifeServices",
@@ -109,9 +123,23 @@ public class AccountMapping {
                         "三亚迎朋酒店公寓管理有限公司": "Expenses:HotelTravel",
                         "北京市香山公园": "Expenses:HotelTravel",
                         "餐饮美食": "Expenses:FoodBeverage",
+                        "很久以前羊肉串": "Expenses:FoodBeverage",
+                        "缤纷时光面包房": "Expenses:FoodBeverage",
+                        "山西刀削面鹏飞": "Expenses:FoodBeverage",
+                        "必胜客": "Expenses:FoodBeverage",
                         "商餐车": "Expenses:FoodBeverage",
                         "全聚德前门店": "Expenses:FoodBeverage",
                         "吉野家": "Expenses:FoodBeverage",
+                        "海盗虾": "Expenses:FoodBeverage",
+                        "北京聚恒升餐饮管理有限公司": "Expenses:FoodBeverage",
+                        "曾三仙米线": "Expenses:FoodBeverage",
+                        "红荔村后海汇店": "Expenses:FoodBeverage",
+                        "农科味道": "Expenses:FoodBeverage",
+                        "老边饺子馆": "Expenses:FoodBeverage",
+                        "禾谷园": "Expenses:FoodBeverage",
+                        "呷哺呷哺": "Expenses:FoodBeverage",
+                        "陈香贵": "Expenses:FoodBeverage",
+                        "延边米村餐饮管理有限公司": "Expenses:FoodBeverage",
                         "和易副食商店": "Expenses:FoodBeverage",
                         "熟食": "Expenses:FoodBeverage",
                         "愚小面": "Expenses:FoodBeverage",
@@ -167,6 +195,9 @@ public class AccountMapping {
                         "团购": "Expenses:FoodBeverage",
                         "珮姐重庆火锅": "Expenses:FoodBeverage",
                         "T2味千拉面": "Expenses:FoodBeverage",
+                        "味千拉面二店": "Expenses:FoodBeverage",
+                        "手工水饺": "Expenses:FoodBeverage",
+                        "三泉冷面": "Expenses:FoodBeverage",
                         "TAGSIU海岸城店": "Expenses:FoodBeverage",
                         "玖玖麻辣烫": "Expenses:FoodBeverage",
                         "SUBWAY": "Expenses:FoodBeverage",
@@ -199,14 +230,24 @@ public class AccountMapping {
                         "主食厨房北京知春路弯巷店": "Expenses:FoodBeverage",
                         "绿茶餐厅": "Expenses:FoodBeverage",
                         "丰茂烤串": "Expenses:FoodBeverage",
+                        "京东工业自有品牌": "Expenses:HomeFurnishing",
                         "北京农学院合作食堂学生食堂": "Expenses:FoodBeverage",
                         "元顺陕西小吃": "Expenses:FoodBeverage",
                         "北京紫福餐饮": "Expenses:FoodBeverage",
                         "三亚吉阳园宝饺子店": "Expenses:FoodBeverage",
                         "和府捞面": "Expenses:FoodBeverage",
                         "福苗小骆驼烧烤": "Expenses:FoodBeverage",
+                        "落舌": "Expenses:FoodBeverage",
+                        "北京琳达小屋餐饮有限公司": "Expenses:FoodBeverage",
+                        "西少爷肉夹馍": "Expenses:FoodBeverage",
+                        "方一坤北京中关村店": "Expenses:FoodBeverage",
+                        "北京福苗小骆驼烧烤": "Expenses:FoodBeverage",
+                        "食品酒饮": "Expenses:FoodBeverage",
                         "星巴克": "Expenses:FoodBeverage:Coffee",
                         "COFFEE": "Expenses:FoodBeverage:Coffee",
+                        "Coffee": "Expenses:FoodBeverage:Coffee",
+                        "PeetsCoffee": "Expenses:FoodBeverage:Coffee",
+                        "星巴克专星送": "Expenses:FoodBeverage:Coffee",
                         "深圳市萨迈餐饮管理有限公司": "Expenses:FoodBeverage:Coffee",
                         "coffee": "Expenses:FoodBeverage:Coffee",
                         "M Stand": "Expenses:FoodBeverage:Coffee",
@@ -234,15 +275,20 @@ public class AccountMapping {
                         "耳机": "Expenses:DigitalEquipment:Audio",
                         "火车票": "Expenses:Transportation:Railway",
                         "打车": "Expenses:Transportation:Taxi",
+                        "国航机票": "Expenses:Transportation:Flight",
                         "北京轨道交通互联网票务": "Expenses:Transportation:Subway",
                         "滴滴出行": "Expenses:Transportation:Taxi",
                         "至善公司大门口车票": "Expenses:Transportation",
+                        "北京京邦达贸易有限公司": "Expenses:Transportation",
                         "王鑫Sherry": "Assets:Receivables:WangXinSherry",
                         "朴老师": "Assets:Receivables:Design",
                         "PtrkTao": "Assets:Receivables:Design",
                         "EZFIX沈晓明": "Expenses:DigitalAppliances",
                         "怪兽充电": "Expenses:DigitalAppliances",
+                        "数码电器": "Expenses:DigitalAppliances",
+                        "手机通讯": "Expenses:DigitalAppliances",
                         "美团充电宝": "Expenses:DigitalAppliances",
+                        "电脑办公": "Expenses:DigitalAppliances",
                         "腾讯云费用账户": "Expenses:CloudService",
                         "转账备注": "Expenses:Other",
                         "淘宝平台商户": "Expenses:Other",
@@ -278,15 +324,11 @@ public class AccountMapping {
 
     static {
         var mapper = JsonMapper.builder()
-                .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
+                .enable(JsonReadFeature.ALLOW_UNQUOTED_PROPERTY_NAMES)
                 .build();
-        try {
-            var map = mapper.readValue(mapping, new TypeReference<Map<String, Map<String, String>>>() {
-            });
-            mappings = Collections.unmodifiableMap(map);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        var map = mapper.readValue(mapping, new TypeReference<Map<String, Map<String, String>>>() {
+        });
+        mappings = Collections.unmodifiableMap(map);
     }
 
 

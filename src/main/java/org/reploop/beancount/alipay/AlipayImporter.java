@@ -1,4 +1,8 @@
-package org.reploop.beancount;
+package org.reploop.beancount.alipay;
+
+import org.reploop.beancount.BillHandler;
+import org.reploop.beancount.BillImporter;
+import org.reploop.beancount.CsvBillImporter;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
@@ -9,12 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class AlipayImporter extends BillImporter<AlipayRecord> {
+public class AlipayImporter implements BillImporter, CsvBillImporter<AlipayRecord> {
 
     public void importCsv(Path path) throws Exception {
         //交易时间	交易分类	交易对方	对方账号	商品说明	收/支	金额	收/付款方式	交易状态	交易订单号	商家订单号	备注
         var headers = Arrays.stream("交易时间	交易分类	交易对方	对方账号	商品说明	收/支	金额	收/付款方式	交易状态	交易订单号	商家订单号	备注".split("\\s+")).toList();
-        var records = super.importCsv(headers, path);
+        var records = importCsv(headers, path);
         for (var record : records) {
             //System.out.println(record);
         }
@@ -33,7 +37,7 @@ public class AlipayImporter extends BillImporter<AlipayRecord> {
     }
 
     @Override
-    BiConsumer<AlipayRecord, String> setter(int idx, String name) {
+    public BiConsumer<AlipayRecord, String> setter(int idx, String name) {
         return switch (idx) {
             case 0 -> (record, s) -> {
                 try {
@@ -57,7 +61,18 @@ public class AlipayImporter extends BillImporter<AlipayRecord> {
     }
 
     @Override
-    BillHandler<AlipayRecord> billHandler(List<AlipayRecord> records, List<String> headers, Map<Integer, BiConsumer<AlipayRecord, String>> setters) {
+    public void doImportFile(Path path) throws Exception {
+        importCsv(path);
+    }
+
+    @Override
+    public boolean support(Path path) {
+        var filename = path.getFileName().toString();
+        return (filename.startsWith("alipay_") || filename.startsWith("支付宝交易明细")) && filename.endsWith(".csv");
+    }
+
+    @Override
+    public BillHandler<AlipayRecord> billHandler(List<AlipayRecord> records, List<String> headers, Map<Integer, BiConsumer<AlipayRecord, String>> setters) {
         // Will fall back to older version
         return new AlipayBillHandler(records, headers, setters);
     }

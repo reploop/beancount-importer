@@ -1,4 +1,6 @@
-package org.reploop.beancount;
+package org.reploop.beancount.wechat;
+
+import org.reploop.beancount.BillHandler;
 
 import java.util.List;
 import java.util.Map;

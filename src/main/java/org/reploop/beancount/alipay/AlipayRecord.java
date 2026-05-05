@@ -1,4 +1,4 @@
-package org.reploop.beancount;
+package org.reploop.beancount.alipay;
 
 import lombok.Data;
 

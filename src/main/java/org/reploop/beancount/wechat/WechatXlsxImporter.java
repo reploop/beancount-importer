@@ -1,28 +1,27 @@
-package org.reploop.beancount;
+package org.reploop.beancount.wechat;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.reploop.beancount.Point;
+import org.reploop.beancount.Type;
+import org.reploop.beancount.XlsxBillImporter;
 
 import java.io.FileInputStream;
-import java.math.BigDecimal;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 import static java.util.Objects.nonNull;
 
-public class WechatXlsxImporter extends WechatImporter {
+public class WechatXlsxImporter extends WechatImporter implements XlsxBillImporter<WechatRecord> {
 
+    @Override
     public List<WechatRecord> importXlsx(Path path) throws Exception {
         List<WechatRecord> records = new ArrayList<>();
         int index = 0;
@@ -78,44 +77,15 @@ public class WechatXlsxImporter extends WechatImporter {
         return records;
     }
 
-    private final Map<ReverseKey, Transaction> reverseTransactions = new LinkedHashMap<>();
-
-    public void importBill(Path path) throws Exception {
+    @Override
+    public void doImportFile(Path path) throws Exception {
         var records = importXlsx(path);
-        convert(records, reverseTransactions);
-    }
+        convert(records, new LinkedHashMap<>());
 
-
-    @Override
-    BiConsumer<WechatRecord, String> setter(int idx, String name) {
-        return switch (idx) {
-            case 0 -> (record, s) -> {
-                try {
-                    record.setCreatedAt(LocalDateTime.parse(s, formatter));
-                } catch (DateTimeParseException ignored) {
-                }
-            };
-            case 1 -> WechatRecord::setCategory;
-            case 2 -> WechatRecord::setPeer;
-            case 3 -> WechatRecord::setGoods;
-            case 4 -> (record, text) -> record.setType(Type.textOf(text));
-            case 5 -> (record, text) -> record.setAmount(new BigDecimal(text.substring(1)));
-            case 6 -> WechatRecord::setMethod;
-            case 7 -> (record, text) -> {
-                if ("已存入零钱".equals(text) && Type.INCOME == record.getType() && "/".equals(record.getMethod())) {
-                    record.setMethod("零钱");
-                }
-                record.setStatus(text);
-            };
-            case 8 -> WechatRecord::setOrder;
-            case 9 -> WechatRecord::setMerchantOrder;
-            case 10 -> WechatRecord::setComment;
-            default -> throw new IllegalStateException();
-        };
     }
 
     @Override
-    BillHandler<WechatRecord> billHandler(List<WechatRecord> records, List<String> headers, Map<Integer, BiConsumer<WechatRecord, String>> setters) {
-        return new WechatBillHandler(records, headers, setters);
+    boolean supportExtension(String filename) {
+        return filename.endsWith(getFileExtension());
     }
 }

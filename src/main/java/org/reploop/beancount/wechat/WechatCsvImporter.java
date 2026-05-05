@@ -1,4 +1,8 @@
-package org.reploop.beancount;
+package org.reploop.beancount.wechat;
+
+import org.reploop.beancount.BillHandler;
+import org.reploop.beancount.CsvBillImporter;
+import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
@@ -10,16 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class WechatCsvImporter extends WechatImporter {
-
-    public void importBill(Path path) throws Exception {
-        var headers = Arrays.stream("交易时间\t交易类型\t交易对方\t商品\t收/支\t金额(元)\t支付方式\t当前状态\t交易单号\t商户单号\t备注".split("\\s+")).toList();
-        var records = importCsv(headers, path);
-        var transactions = convert(records, new HashMap<>());
-    }
+public class WechatCsvImporter extends WechatImporter implements CsvBillImporter<WechatRecord> {
 
     @Override
-    BiConsumer<WechatRecord, String> setter(int idx, String name) {
+    public BiConsumer<WechatRecord, String> setter(int idx, String name) {
         return switch (idx) {
             case 0 -> (record, s) -> {
                 try {
@@ -47,7 +45,19 @@ public class WechatCsvImporter extends WechatImporter {
     }
 
     @Override
-    BillHandler<WechatRecord> billHandler(List<WechatRecord> records, List<String> headers, Map<Integer, BiConsumer<WechatRecord, String>> setters) {
+    public BillHandler<WechatRecord> billHandler(List<WechatRecord> records, List<String> headers, Map<Integer, BiConsumer<WechatRecord, String>> setters) {
         return new WechatBillHandler(records, headers, setters);
+    }
+
+    @Override
+    public void doImportFile(Path path) throws Exception {
+        var headers = Arrays.stream("交易时间\t交易类型\t交易对方\t商品\t收/支\t金额(元)\t支付方式\t当前状态\t交易单号\t商户单号\t备注".split("\\s+")).toList();
+        var records = importCsv(headers, path);
+        var transactions = convert(records, new HashMap<>());
+    }
+
+    @Override
+    boolean supportExtension(String filename) {
+        return filename.endsWith(getFileExtension());
     }
 }

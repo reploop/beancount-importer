@@ -1,4 +1,7 @@
-package org.reploop.beancount;
+package org.reploop.beancount.alipay;
+
+import org.reploop.beancount.BillHandler;
+import org.reploop.beancount.CsvBillImporter;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
@@ -9,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class AlipayOldImporter extends BillImporter<AlipayRecord> {
+public class AlipayOldImporter implements CsvBillImporter<AlipayRecord> {
     public void importCsv(Path path) throws Exception {
         var headers = Arrays.stream("收/支\t交易对方\t对方账号\t商品说明\t收/付款方式\t金额\t交易状态\t交易分类\t交易订单号\t商家订单号\t交易时间".split("\\s+")).toList();
         var records = importCsv(headers, path);
@@ -31,7 +34,7 @@ public class AlipayOldImporter extends BillImporter<AlipayRecord> {
     }
 
     @Override
-    BiConsumer<AlipayRecord, String> setter(int idx, String name) {
+    public BiConsumer<AlipayRecord, String> setter(int idx, String name) {
         return switch (idx) {
             case 10 -> (record, s) -> {
                 try {
@@ -55,7 +58,18 @@ public class AlipayOldImporter extends BillImporter<AlipayRecord> {
     }
 
     @Override
-    BillHandler<AlipayRecord> billHandler(List<AlipayRecord> records, List<String> headers, Map<Integer, BiConsumer<AlipayRecord, String>> setters) {
+    public boolean support(Path path) {
+        var filename = path.getFileName().toString();
+        return (filename.startsWith("alipay_") || filename.startsWith("支付宝")) && filename.endsWith(".csv");
+    }
+
+    @Override
+    public void doImportFile(Path path) throws Exception {
+        importCsv(path);
+    }
+
+    @Override
+    public BillHandler<AlipayRecord> billHandler(List<AlipayRecord> records, List<String> headers, Map<Integer, BiConsumer<AlipayRecord, String>> setters) {
         return new AlipayBillHandler(records, headers, setters);
     }
 }

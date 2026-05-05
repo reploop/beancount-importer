@@ -1,6 +1,7 @@
-package org.reploop.beancount;
+package org.reploop.beancount.wechat;
 
 import lombok.Data;
+import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

@@ -1,23 +1,36 @@
 package org.reploop.beancount;
 
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public enum Type {
     INCOME("收入"),
     EXPENSE("支出"),
     OTHER("其他"),
-    NOT_APPLICABLE("不计入收支");
-    final String text;
+    NOT_APPLICABLE("不计入收支", "不计收支");
+    final Set<String> text = new HashSet<>();
 
-    Type(String text) {
-        this.text = text;
+    Type(String... names) {
+        this.text.addAll(Arrays.asList(names));
+    }
+
+    private static final Map<String, Type> cache;
+
+    static {
+        Map<String, Type> map = new HashMap<>();
+        for (Type type : Type.values()) {
+            for (var val : type.text) {
+                map.put(val, type);
+            }
+        }
+        cache = Collections.unmodifiableMap(map);
     }
 
     public static Type textOf(String text) {
-        return Arrays.stream(Type.values())
-                .filter(t -> Objects.equals(t.text, text))
-                .findFirst()
-                .orElseThrow();
+        return cache.get(text);
     }
 }
