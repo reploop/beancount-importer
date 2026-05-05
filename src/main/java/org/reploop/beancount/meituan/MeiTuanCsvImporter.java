@@ -3,6 +3,8 @@ package org.reploop.beancount.meituan;
 import org.reploop.beancount.BillHandler;
 import org.reploop.beancount.CsvBillImporter;
 import org.reploop.beancount.Type;
+import org.reploop.beancount.account.AccountMapping;
+import org.reploop.beancount.account.AccountType;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
@@ -44,6 +46,7 @@ public class MeiTuanCsvImporter implements CsvBillImporter<MeiTuanRecord> {
         var list = records.stream().sorted(Comparator.comparing(MeiTuanRecord::getCreateTime)).toList();
         for (MeiTuanRecord r : list) {
             System.out.println(r);
+            AccountMapping.account(AccountType.EXPENSES, r.getMethod());
         }
     }
 
