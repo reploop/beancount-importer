@@ -20,6 +20,6 @@ public class JdBillHandler extends BillHandler<JdRecord> {
 
     @Override
     protected boolean validate(JdRecord jdRecord) {
-        return super.validate(jdRecord) && nonNull(jdRecord.getTransactionTime());
+        return super.validate(jdRecord) && nonNull(jdRecord.getCreatedAt());
     }
 }

@@ -1,23 +1,17 @@
 package org.reploop.beancount.meituan;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.reploop.beancount.BillRecord;
-import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
+@ToString(callSuper = true)
 public class MeiTuanRecord extends BillRecord {
-    LocalDateTime createTime;
     LocalDateTime successTime;
-    String category;
-    String goods;
-    Type type;
-    String method;
-    BigDecimal amount;
     BigDecimal actualAmount;
-    String orderNo;
-    String merchantOrderNo;
-    String remarks;
 }

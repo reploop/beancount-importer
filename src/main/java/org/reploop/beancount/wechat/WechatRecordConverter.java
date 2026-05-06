@@ -4,6 +4,7 @@ import org.reploop.beancount.AbstractRecordConverter;
 import org.reploop.beancount.ReverseContext;
 import org.reploop.beancount.ReverseKey;
 import org.reploop.beancount.Transaction;
+import org.reploop.beancount.TxnReverseContext;
 import org.reploop.beancount.Type;
 
 import java.util.Collections;
@@ -69,12 +70,12 @@ public class WechatRecordConverter extends AbstractRecordConverter<WechatRecord>
             var status = r.getStatus();
             var method = r.getMethod();
             if (Objects.equals("已全额退款", status)) {
-                reverses.put(new WechatReverseKey(status, method), new WechatReverseContext(txn));
+                reverses.put(new WechatReverseKey(status, method), new TxnReverseContext(txn));
             } else if (status.startsWith("已退款")) {
                 var m = PART_REVERSE_PATTERN.matcher(status);
                 if (m.find()) {
                     status = "已退款" + m.group(1);
-                    reverses.put(new WechatReverseKey(status, method), new WechatReverseContext(txn));
+                    reverses.put(new WechatReverseKey(status, method), new TxnReverseContext(txn));
                 }
             }
         }

@@ -45,14 +45,11 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
                     .dateTime(r.getCreatedAt())
                     .narration(r.getGoods())
                     .meta(Map.of("date", dateTime.toLocalDate(), "time", dateTime.toLocalTime()));
-            BigDecimal amount;
+            BigDecimal amount = r.getAmount();
             var type = r.getType();
-            switch (type) {
-                case EXPENSE -> amount = r.getAmount().negate();
-                case INCOME -> amount = r.getAmount();
-                default -> throw new IllegalStateException(type.toString());
+            if (Type.EXPENSE == type) {
+                amount = amount.negate();
             }
-
             // It's always your assets or liabilities
             String myAccount = null;
             String peerAccount = null;
@@ -60,7 +57,7 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
             String method = r.getMethod();
             // If there is refund
             ReverseKey reverseKey;
-            if (Type.INCOME == type && nonNull(reverseKey = reverseKey(r))) {
+            if (Type.EXPENSE != type && nonNull(reverseKey = reverseKey(r))) {
                 var reverseContext = reverses.get(reverseKey);
                 Transaction prev;
                 if (nonNull(reverseContext) && nonNull(prev = reverseContext.getTxn())) {
@@ -81,7 +78,7 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
             // Identify my account
             if (isNull(myAccount)) {
                 EnumSet<AccountType> accountTypes = EnumSet.of(AccountType.ASSETS, AccountType.LIABILITIES);
-                myAccount = search(accountTypes, List.of(method));
+                myAccount = search(accountTypes, mySearchList(r));
                 if (isNull(myAccount)) {
                     throw new IllegalStateException(method);
                 }
@@ -113,7 +110,9 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
             builder.postings(List.of(myPosting, peerPosting));
             var txn = builder.build();
             transactions.add(txn);
-            reverse(r, txn, reverses);
+            if (Type.EXPENSE == type) {
+                reverse(r, txn, reverses);
+            }
         }
         for (var txn : transactions) {
             System.out.println(txn);
@@ -140,7 +139,9 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
         return Collections.emptySet();
     }
 
-    protected Set<String> peerSearchList(R r) {
-        return Collections.emptySet();
+    protected abstract Set<String> peerSearchList(R r);
+
+    protected Set<String> mySearchList(R r) {
+        return Set.of(r.getMethod());
     }
 }

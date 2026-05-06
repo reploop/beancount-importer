@@ -19,7 +19,7 @@ public class MeiTuanCsvImporter implements CsvBillImporter<MeiTuanRecord> {
     @Override
     public BiConsumer<MeiTuanRecord, String> setter(int idx, String name) {
         return switch (idx) {
-            case 0 -> (mtr, s) -> mtr.setCreateTime(LocalDateTime.parse(s, formatter));
+            case 0 -> (mtr, s) -> mtr.setCreatedAt(LocalDateTime.parse(s, formatter));
             case 1 -> (mtr, s) -> mtr.setSuccessTime(LocalDateTime.parse(s, formatter));
             case 2 -> MeiTuanRecord::setCategory;
             case 3 -> MeiTuanRecord::setGoods;
@@ -27,8 +27,8 @@ public class MeiTuanCsvImporter implements CsvBillImporter<MeiTuanRecord> {
             case 5 -> MeiTuanRecord::setMethod;
             case 6 -> (mtr, s) -> mtr.setAmount(new BigDecimal(s));
             case 7 -> (mtr, s) -> mtr.setActualAmount(new BigDecimal(s));
-            case 8 -> MeiTuanRecord::setOrderNo;
-            case 9 -> MeiTuanRecord::setMerchantOrderNo;
+            case 8 -> MeiTuanRecord::setOrder;
+            case 9 -> MeiTuanRecord::setMerchantOrder;
             case 10 -> MeiTuanRecord::setRemarks;
             default -> throw new IllegalStateException("Unexpected value: " + idx);
         };

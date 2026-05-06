@@ -20,6 +20,6 @@ public class MeiTuanBillHandler extends BillHandler<MeiTuanRecord> {
 
     @Override
     protected boolean validate(MeiTuanRecord meiTuanRecord) {
-        return super.validate(meiTuanRecord) && nonNull(meiTuanRecord.getCreateTime());
+        return super.validate(meiTuanRecord) && nonNull(meiTuanRecord.getCreatedAt());
     }
 }

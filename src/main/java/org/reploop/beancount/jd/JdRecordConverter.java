@@ -3,6 +3,7 @@ package org.reploop.beancount.jd;
 import org.reploop.beancount.AbstractRecordConverter;
 import org.reploop.beancount.ReverseContext;
 import org.reploop.beancount.ReverseKey;
+import org.reploop.beancount.StringReverseKey;
 import org.reploop.beancount.Transaction;
 import org.reploop.beancount.Type;
 
@@ -20,8 +21,8 @@ public class JdRecordConverter extends AbstractRecordConverter<JdRecord> {
 
     @Override
     public ReverseKey reverseKey(JdRecord r) {
-        if (r.getDescription().startsWith("退款-") && Type.NOT_APPLICABLE == r.getType()) {
-            return new JdReverseKey(r.getOrderNo());
+        if (r.getGoods().startsWith("退款-") && Type.NOT_APPLICABLE == r.getType()) {
+            return new StringReverseKey(r.getOrder());
         }
         return null;
     }
@@ -30,7 +31,7 @@ public class JdRecordConverter extends AbstractRecordConverter<JdRecord> {
     protected Set<String> peerSearchList(JdRecord r) {
         Set<String> searchList = new LinkedHashSet<>();
         searchList.addAll(segment(r.getCategory()));
-        searchList.addAll(segment(r.getDescription()));
+        searchList.addAll(segment(r.getGoods()));
         return searchList;
     }
 
@@ -48,7 +49,7 @@ public class JdRecordConverter extends AbstractRecordConverter<JdRecord> {
             var m = REVERSE_PATTERN.matcher(amountText);
             if (m.find()) {
                 var reverseAmount = new BigDecimal(m.group(2));
-                reverseMap.put(new JdReverseKey(r.getOrderNo()), new JdReverseContext(txn, reverseAmount));
+                reverseMap.put(new StringReverseKey(r.getOrder()), new JdReverseContext(txn, reverseAmount));
             }
         }
     }

@@ -23,25 +23,25 @@ public class JdCsvImporter implements CsvBillImporter<JdRecord> {
     @Override
     public BiConsumer<JdRecord, String> setter(int idx, String name) {
         return switch (idx) {
-            case 0 -> (jdRecord, s) -> jdRecord.setTransactionTime(LocalDateTime.parse(s, formatter));
-            case 1 -> JdRecord::setMerchantName;
-            case 2 -> JdRecord::setDescription;
-            case 3 -> (jdRecord, s) -> {
+            case 0 -> (r, s) -> r.setCreatedAt(LocalDateTime.parse(s, formatter));
+            case 1 -> JdRecord::setPeer;
+            case 2 -> JdRecord::setGoods;
+            case 3 -> (r, s) -> {
                 var m = REVERSE_PATTERN.matcher(s);
                 String value = s;
                 if (m.find()) {
-                    jdRecord.setAmountText(s);
+                    r.setAmountText(s);
                     value = m.group(1);
                 }
-                jdRecord.setAmount(new BigDecimal(value));
+                r.setAmount(new BigDecimal(value));
             };
             case 4 -> JdRecord::setMethod;
             case 5 -> JdRecord::setStatus;
-            case 6 -> (jdRecord, s) -> jdRecord.setType(Type.textOf(s));
+            case 6 -> (r, s) -> r.setType(Type.textOf(s));
             case 7 -> JdRecord::setCategory;
-            case 8 -> JdRecord::setOrderNo;
-            case 9 -> JdRecord::setMerchantOrderNo;
-            case 10 -> JdRecord::setNotes;
+            case 8 -> JdRecord::setOrder;
+            case 9 -> JdRecord::setMerchantOrder;
+            case 10 -> JdRecord::setRemarks;
             default -> throw new IllegalStateException("Unexpected value: " + idx);
         };
     }

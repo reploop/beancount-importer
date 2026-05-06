@@ -42,7 +42,7 @@ public class AlipayOldImporter implements CsvBillImporter<AlipayRecord> {
             case 6 -> AlipayRecord::setStatus;
             case 8 -> AlipayRecord::setOrder;
             case 9 -> AlipayRecord::setMerchantOrder;
-            case 11 -> AlipayRecord::setComment;
+            case 11 -> AlipayRecord::setRemarks;
             default -> throw new IllegalStateException();
         };
     }

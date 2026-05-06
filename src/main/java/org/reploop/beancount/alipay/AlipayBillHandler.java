@@ -21,6 +21,6 @@ public class AlipayBillHandler extends BillHandler<AlipayRecord> {
 
     @Override
     protected boolean validate(AlipayRecord record) {
-        return nonNull(record.getCreatedAt());
+        return super.validate(record) && nonNull(record.getCreatedAt());
     }
 }
