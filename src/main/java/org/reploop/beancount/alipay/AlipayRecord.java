@@ -1,19 +1,21 @@
 package org.reploop.beancount.alipay;
 
 import lombok.Data;
+import org.reploop.beancount.BillRecord;
+import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
 @Data
-public class AlipayRecord {
+public class AlipayRecord extends BillRecord {
     LocalDateTime createdAt;
     String category;
     String peer;
     String peerAccount;
     String goods;
-    String type;
+    Type type;
     BigDecimal amount;
     String method;
     String status;

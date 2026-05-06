@@ -3,19 +3,19 @@ package org.reploop.beancount.meituan;
 import org.reploop.beancount.BillHandler;
 import org.reploop.beancount.CsvBillImporter;
 import org.reploop.beancount.Type;
-import org.reploop.beancount.account.AccountMapping;
-import org.reploop.beancount.account.AccountType;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class MeiTuanCsvImporter implements CsvBillImporter<MeiTuanRecord> {
+    private final MeiTuanRecordConverter converter = new MeiTuanRecordConverter();
+
     @Override
     public BiConsumer<MeiTuanRecord, String> setter(int idx, String name) {
         return switch (idx) {
@@ -43,11 +43,7 @@ public class MeiTuanCsvImporter implements CsvBillImporter<MeiTuanRecord> {
     public void doImportFile(Path path) throws Exception {
         var headers = Arrays.stream("交易创建时间\t交易成功时间\t交易类型\t订单标题\t收/支\t支付方式\t订单金额\t实付金额\t交易单号\t商家单号\t备注".split("\t")).toList();
         var records = importCsv(headers, path);
-        var list = records.stream().sorted(Comparator.comparing(MeiTuanRecord::getCreateTime)).toList();
-        for (MeiTuanRecord r : list) {
-            System.out.println(r);
-            AccountMapping.account(AccountType.EXPENSES, r.getMethod());
-        }
+        converter.convert(records, new HashMap<>());
     }
 
     @Override

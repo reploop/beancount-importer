@@ -3,37 +3,26 @@ package org.reploop.beancount.alipay;
 import org.reploop.beancount.BillHandler;
 import org.reploop.beancount.BillImporter;
 import org.reploop.beancount.CsvBillImporter;
+import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class AlipayImporter implements BillImporter, CsvBillImporter<AlipayRecord> {
+    private final AlipayRecordConverter converter = new AlipayRecordConverter();
 
     public void importCsv(Path path) throws Exception {
         //交易时间	交易分类	交易对方	对方账号	商品说明	收/支	金额	收/付款方式	交易状态	交易订单号	商家订单号	备注
         var headers = Arrays.stream("交易时间	交易分类	交易对方	对方账号	商品说明	收/支	金额	收/付款方式	交易状态	交易订单号	商家订单号	备注".split("\\s+")).toList();
         var records = importCsv(headers, path);
-        for (var record : records) {
-            //System.out.println(record);
-        }
-        var types = records.stream().map(AlipayRecord::getType).sorted().distinct().toList();
-        System.out.println(types);
-        var methods = records.stream().map(AlipayRecord::getMethod).sorted().distinct().toList();
-        System.out.println(methods);
-        var goods = records.stream().map(AlipayRecord::getGoods)
-                .map(s -> s.replaceAll("\\d+", ""))
-                .sorted().distinct().toList();
-        System.out.println(goods);
-        var payee = records.stream().map(AlipayRecord::getPeer)
-                .sorted()
-                .distinct().toList();
-        System.out.println(payee);
+        converter.convert(records, new HashMap<>());
     }
 
     @Override
@@ -49,7 +38,7 @@ public class AlipayImporter implements BillImporter, CsvBillImporter<AlipayRecor
             case 2 -> AlipayRecord::setPeer;
             case 3 -> AlipayRecord::setPeerAccount;
             case 4 -> AlipayRecord::setGoods;
-            case 5 -> AlipayRecord::setType;
+            case 5 -> (r, s) -> r.setType(Type.textOf(s));
             case 6 -> (record, text) -> record.setAmount(new BigDecimal(text));
             case 7 -> AlipayRecord::setMethod;
             case 8 -> AlipayRecord::setStatus;

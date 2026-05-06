@@ -39,7 +39,7 @@ public class WechatCsvImporter extends WechatImporter implements CsvBillImporter
             };
             case 8 -> WechatRecord::setOrder;
             case 9 -> WechatRecord::setMerchantOrder;
-            case 10 -> WechatRecord::setComment;
+            case 10 -> WechatRecord::setRemarks;
             default -> throw new IllegalStateException();
         };
     }

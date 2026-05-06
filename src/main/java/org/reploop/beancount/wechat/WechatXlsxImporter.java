@@ -37,7 +37,7 @@ public class WechatXlsxImporter extends WechatImporter implements XlsxBillImport
                 new Point<>(index++, "当前状态", Cell::getStringCellValue, WechatRecord::setStatus),
                 new Point<>(index++, "交易单号", Cell::getStringCellValue, WechatRecord::setOrder),
                 new Point<>(index++, "商户单号", Cell::getStringCellValue, WechatRecord::setMerchantOrder),
-                new Point<>(index++, "备注", Cell::getStringCellValue, WechatRecord::setComment)
+                new Point<>(index++, "备注", Cell::getStringCellValue, WechatRecord::setRemarks)
         );
         int columns = points.size();
         try (XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(path.toFile()))) {

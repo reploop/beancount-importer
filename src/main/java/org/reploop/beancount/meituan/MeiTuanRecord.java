@@ -1,13 +1,14 @@
 package org.reploop.beancount.meituan;
 
 import lombok.Data;
+import org.reploop.beancount.BillRecord;
 import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class MeiTuanRecord {
+public class MeiTuanRecord extends BillRecord {
     LocalDateTime createTime;
     LocalDateTime successTime;
     String category;

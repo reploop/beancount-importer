@@ -296,6 +296,7 @@
     "微信红包": "Income:RedPacket:WeChat"
   },
   "liabilities": {
+    "": "",
     "中信银行(7661)": "Liabilities:CreditCard:CITIC:7661",
     "广发银行信用卡(2893)": "Liabilities:CreditCard:CGB:2893",
     "中信银行信用卡(7661)": "Liabilities:CreditCard:CITIC:7661",
