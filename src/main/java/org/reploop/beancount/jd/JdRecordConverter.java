@@ -20,9 +20,10 @@ public class JdRecordConverter extends AbstractRecordConverter<JdRecord> {
 
 
     @Override
-    public ReverseKey reverseKey(JdRecord r) {
+    public ReverseContext reverseContext(JdRecord r, Map<ReverseKey, ReverseContext> contexts) {
         if (r.getGoods().startsWith("退款-") && Type.NOT_APPLICABLE == r.getType()) {
-            return new StringReverseKey(r.getOrder());
+            var key = new StringReverseKey(r.getOrder());
+            return contexts.get(key);
         }
         return null;
     }

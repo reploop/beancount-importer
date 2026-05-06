@@ -42,11 +42,12 @@ public class AlipayRecordConverter extends AbstractRecordConverter<AlipayRecord>
     }
 
     @Override
-    public ReverseKey reverseKey(AlipayRecord r) {
+    protected ReverseContext reverseContext(AlipayRecord r, Map<ReverseKey, ReverseContext> contexts) {
         var order = r.getOrder();
         int idx;
         if (Objects.equals("退款成功", r.getStatus()) && (idx = order.indexOf("_")) > 0) {
-            return new StringReverseKey(order.substring(0, idx));
+            var key = new StringReverseKey(order.substring(0, idx));
+            return contexts.remove(key);
         }
         return null;
     }

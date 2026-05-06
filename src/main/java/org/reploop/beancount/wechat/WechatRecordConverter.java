@@ -29,8 +29,9 @@ public class WechatRecordConverter extends AbstractRecordConverter<WechatRecord>
     }
 
     @Override
-    public ReverseKey reverseKey(WechatRecord r) {
-        return new WechatReverseKey(r.getStatus(), r.getMethod());
+    protected ReverseContext reverseContext(WechatRecord r, Map<ReverseKey, ReverseContext> contexts) {
+        var key = new WechatReverseKey(r.getStatus(), r.getMethod());
+        return contexts.remove(key);
     }
 
     @Override

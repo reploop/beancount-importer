@@ -21,7 +21,7 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
     public void start(R r) {
     }
 
-    public ReverseKey reverseKey(R r) {
+    protected ReverseContext reverseContext(R r, Map<ReverseKey, ReverseContext> contexts) {
         return null;
     }
 
@@ -56,11 +56,10 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
             // If it's a reverse, just reuse the accounts
             String method = r.getMethod();
             // If there is refund
-            ReverseKey reverseKey;
-            if (Type.EXPENSE != type && nonNull(reverseKey = reverseKey(r))) {
-                var reverseContext = reverses.get(reverseKey);
+            ReverseContext reverseContext;
+            if (Type.EXPENSE != type && nonNull(reverseContext = reverseContext(r, reverses))) {
                 Transaction prev;
-                if (nonNull(reverseContext) && nonNull(prev = reverseContext.getTxn())) {
+                if (nonNull(prev = reverseContext.getTxn())) {
                     // my, peer
                     var postings = prev.getPostings();
                     for (var posting : postings) {
