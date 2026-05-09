@@ -26,7 +26,7 @@ public class Importer {
         JdCsvImporter jdImporter = new JdCsvImporter();
         List<BillImporter> billImporters = new ArrayList<>();
         //billImporters.add(xlsxImporter);
-        billImporters.add(alipayImporter);
+        billImporters.add(mtCsvImporter);
         Path dir = Paths.get("/Users/gc/Downloads/bills");
         try (var s = Files.find(dir, Integer.MAX_VALUE, (p, attrs) -> Files.isReadable(p))) {
             s.forEach(path -> {
