@@ -14,11 +14,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
+import static java.util.Objects.nonNull;
 import static org.reploop.beancount.jd.JdConstants.REVERSE_PATTERN;
 
 public class JdCsvImporter implements CsvBillImporter<JdRecord> {
     private final JdRecordConverter converter = new JdRecordConverter();
+
+    private String reverse(Pattern pattern, String s, Consumer<String> n) {
+        var m = pattern.matcher(s);
+        if (m.find()) {
+            var c = m.groupCount();
+            if (c > 1 && nonNull(n)) {
+                n.accept(m.group(2));
+            }
+            return m.group(1);
+        }
+        return s;
+    }
 
     @Override
     public BiConsumer<JdRecord, String> setter(int idx, String name) {

@@ -94,7 +94,7 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
                 }
                 if (isNull(peerAccount)) {
                     Set<String> searchList = peerSearchList(r);
-                    Set<AccountType> accountTypes = Set.of(AccountType.EXPENSES, AccountType.LIABILITIES, AccountType.ASSETS);
+                    List<AccountType> accountTypes = List.of(AccountType.EXPENSES, AccountType.LIABILITIES, AccountType.INCOME, AccountType.ASSETS);
                     peerAccount = search(accountTypes, searchList);
                     if (isNull(peerAccount)) {
                         throw new IllegalStateException(searchList + " not found");

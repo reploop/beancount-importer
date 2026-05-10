@@ -14,9 +14,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class MeiTuanCsvImporter implements CsvBillImporter<MeiTuanRecord> {
-    private final MeiTuanRecordConverter converter = new MeiTuanRecordConverter();
-
     private static final String D_S = "¥";
+    private final MeiTuanRecordConverter converter = new MeiTuanRecordConverter();
 
     private BigDecimal amount(String s) {
         if (s.startsWith(D_S)) {

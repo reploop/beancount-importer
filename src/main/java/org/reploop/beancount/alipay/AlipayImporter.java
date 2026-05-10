@@ -1,5 +1,6 @@
 package org.reploop.beancount.alipay;
 
+import lombok.extern.slf4j.Slf4j;
 import org.reploop.beancount.BillHandler;
 import org.reploop.beancount.BillImporter;
 import org.reploop.beancount.CsvBillImporter;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+@Slf4j
 public class AlipayImporter implements BillImporter, CsvBillImporter<AlipayRecord> {
     private final AlipayRecordConverter converter = new AlipayRecordConverter();
 
@@ -51,6 +53,7 @@ public class AlipayImporter implements BillImporter, CsvBillImporter<AlipayRecor
 
     @Override
     public void doImportFile(Path path) throws Exception {
+        log.info("Importing {}", path);
         importCsv(path);
     }
 

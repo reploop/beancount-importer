@@ -23,7 +23,7 @@ public class MeiTuanRecordConverter extends AbstractRecordConverter<MeiTuanRecor
     @Override
     protected boolean test(MeiTuanRecord r) {
         // WeChat payment filter out
-        return !Objects.equals("微信支付", r.getMethod());
+        return !(Objects.equals("支付宝支付", r.getMethod()) || Objects.equals("微信支付", r.getMethod()));
     }
 
     @Override

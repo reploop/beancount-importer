@@ -12,12 +12,6 @@ public enum Type {
     EXPENSE("支出"),
     OTHER("其他"),
     NOT_APPLICABLE("不计入收支", "不计收支");
-    final Set<String> text = new HashSet<>();
-
-    Type(String... names) {
-        this.text.addAll(Arrays.asList(names));
-    }
-
     private static final Map<String, Type> cache;
 
     static {
@@ -28,6 +22,12 @@ public enum Type {
             }
         }
         cache = Collections.unmodifiableMap(map);
+    }
+
+    final Set<String> text = new HashSet<>();
+
+    Type(String... names) {
+        this.text.addAll(Arrays.asList(names));
     }
 
     public static Type textOf(String text) {

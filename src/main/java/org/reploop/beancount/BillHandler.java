@@ -19,15 +19,13 @@ public abstract class BillHandler<R> extends DefaultHandler {
     private final List<R> records;
     private final List<String> headers;
     private final Map<Integer, BiConsumer<R, String>> setters;
-
+    private R record;
+    private int index = 0;
     public BillHandler(List<R> records, List<String> headers, Map<Integer, BiConsumer<R, String>> setters) {
         this.records = records;
         this.setters = setters;
         this.headers = headers;
     }
-
-    private R record;
-    private int index = 0;
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {

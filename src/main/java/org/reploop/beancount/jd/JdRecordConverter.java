@@ -39,7 +39,7 @@ public class JdRecordConverter extends AbstractRecordConverter<JdRecord> {
     @Override
     protected boolean test(JdRecord r) {
         // WeChat payment filter out
-        return !Objects.equals("微信支付", r.getMethod());
+        return !(Objects.equals("微信支付", r.getMethod()) || Objects.equals("微信-浦发银行信用卡", r.getMethod()));
     }
 
     @Override

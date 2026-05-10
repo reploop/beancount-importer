@@ -47,15 +47,15 @@ public class WechatRecordConverter extends AbstractRecordConverter<WechatRecord>
     protected Set<String> peerSearchList(WechatRecord r) {
         Set<String> searchList = new LinkedHashSet<>();
         var category = r.getCategory();
-        if (Objects.equals("扫二维码付款", category)) {
-            searchList.add("扫二维码付款");
-        }
         searchList.add(r.getPeer());
         searchList.add(r.getGoods());
         searchList.add(r.getCategory());
         searchList.addAll(segment(r.getPeer()));
         searchList.addAll(segment(r.getGoods()));
         searchList.addAll(segment(r.getCategory()));
+        if (Objects.equals("扫二维码付款", category)) {
+            searchList.add("扫二维码付款");
+        }
         return searchList;
     }
 

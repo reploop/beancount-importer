@@ -15,7 +15,7 @@ public interface RecordConverter<R extends BillRecord> {
     }
 
     default List<String> segment(String val, Comparator<String> cmp) {
-        var values = val.split("[\\s-_&（）·:，|()【】\\[\\]]+");
+        var values = val.split("[\\s-_&（）·:，|()【】\\[\\]•]+");
         var s = Arrays.stream(values).map(String::trim);
         if (nonNull(cmp)) {
             return s.sorted(cmp).toList();
