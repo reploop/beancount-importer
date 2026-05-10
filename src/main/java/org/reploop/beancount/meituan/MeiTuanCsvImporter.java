@@ -16,6 +16,15 @@ import java.util.function.BiConsumer;
 public class MeiTuanCsvImporter implements CsvBillImporter<MeiTuanRecord> {
     private final MeiTuanRecordConverter converter = new MeiTuanRecordConverter();
 
+    private static final String D_S = "¥";
+
+    private BigDecimal amount(String s) {
+        if (s.startsWith(D_S)) {
+            return new BigDecimal(s.substring(D_S.length()));
+        }
+        throw new IllegalStateException(s);
+    }
+
     @Override
     public BiConsumer<MeiTuanRecord, String> setter(int idx, String name) {
         return switch (idx) {
@@ -25,8 +34,8 @@ public class MeiTuanCsvImporter implements CsvBillImporter<MeiTuanRecord> {
             case 3 -> MeiTuanRecord::setGoods;
             case 4 -> (mtr, s) -> mtr.setType(Type.textOf(s));
             case 5 -> MeiTuanRecord::setMethod;
-            case 6 -> (mtr, s) -> mtr.setAmount(new BigDecimal(s));
-            case 7 -> (mtr, s) -> mtr.setActualAmount(new BigDecimal(s));
+            case 6 -> (mtr, s) -> mtr.setAmount(amount(s));
+            case 7 -> (mtr, s) -> mtr.setActualAmount(amount(s));
             case 8 -> MeiTuanRecord::setOrder;
             case 9 -> MeiTuanRecord::setMerchantOrder;
             case 10 -> MeiTuanRecord::setRemarks;
