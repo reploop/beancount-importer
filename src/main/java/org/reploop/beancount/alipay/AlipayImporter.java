@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.reploop.beancount.BillHandler;
 import org.reploop.beancount.BillImporter;
 import org.reploop.beancount.CsvBillImporter;
+import org.reploop.beancount.Platform;
+import org.reploop.beancount.Transaction;
 import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
@@ -20,11 +22,11 @@ import java.util.function.BiConsumer;
 public class AlipayImporter implements BillImporter, CsvBillImporter<AlipayRecord> {
     private final AlipayRecordConverter converter = new AlipayRecordConverter();
 
-    public void importCsv(Path path) throws Exception {
+    public List<Transaction> importCsv(Path path) throws Exception {
         //交易时间	交易分类	交易对方	对方账号	商品说明	收/支	金额	收/付款方式	交易状态	交易订单号	商家订单号	备注
         var headers = Arrays.stream("交易时间	交易分类	交易对方	对方账号	商品说明	收/支	金额	收/付款方式	交易状态	交易订单号	商家订单号	备注".split("\\s+")).toList();
         var records = importCsv(headers, path);
-        converter.convert(records, new HashMap<>());
+        return converter.convert(records, new HashMap<>());
     }
 
     @Override
@@ -52,9 +54,14 @@ public class AlipayImporter implements BillImporter, CsvBillImporter<AlipayRecor
     }
 
     @Override
-    public void doImportFile(Path path) throws Exception {
+    public Platform platform() {
+        return Platform.ALIPAY;
+    }
+
+    @Override
+    public List<Transaction> doImportFile(Path path) throws Exception {
         log.info("Importing {}", path);
-        importCsv(path);
+        return importCsv(path);
     }
 
     @Override

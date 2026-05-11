@@ -2,8 +2,10 @@ package org.reploop.beancount.jd;
 
 import org.reploop.beancount.BillHandler;
 import org.reploop.beancount.CsvBillImporter;
+import org.reploop.beancount.Platform;
 import org.reploop.beancount.ReverseContext;
 import org.reploop.beancount.ReverseKey;
+import org.reploop.beancount.Transaction;
 import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
@@ -67,11 +69,16 @@ public class JdCsvImporter implements CsvBillImporter<JdRecord> {
     }
 
     @Override
-    public void doImportFile(Path path) throws Exception {
+    public Platform platform() {
+        return Platform.JD;
+    }
+
+    @Override
+    public List<Transaction> doImportFile(Path path) throws Exception {
         var headers = Arrays.stream("交易时间,商户名称,交易说明,金额,收/付款方式,交易状态,收/支,交易分类,交易订单号,商家订单号,备注".split(",")).toList();
         Map<ReverseKey, ReverseContext> reverseTxn = new HashMap<>();
         var records = importCsv(headers, path);
-        converter.convert(records, reverseTxn);
+        return converter.convert(records, reverseTxn);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.reploop.beancount.wechat;
 
 import org.reploop.beancount.BillHandler;
 import org.reploop.beancount.CsvBillImporter;
+import org.reploop.beancount.Transaction;
 import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
@@ -50,10 +51,10 @@ public class WechatCsvImporter extends WechatImporter implements CsvBillImporter
     }
 
     @Override
-    public void doImportFile(Path path) throws Exception {
+    public List<Transaction> doImportFile(Path path) throws Exception {
         var headers = Arrays.stream("交易时间\t交易类型\t交易对方\t商品\t收/支\t金额(元)\t支付方式\t当前状态\t交易单号\t商户单号\t备注".split("\\s+")).toList();
         var records = importCsv(headers, path);
-        var transactions = convert(records, new HashMap<>());
+        return convert(records, new HashMap<>());
     }
 
     @Override

@@ -2,6 +2,8 @@ package org.reploop.beancount.meituan;
 
 import org.reploop.beancount.BillHandler;
 import org.reploop.beancount.CsvBillImporter;
+import org.reploop.beancount.Platform;
+import org.reploop.beancount.Transaction;
 import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
@@ -48,10 +50,15 @@ public class MeiTuanCsvImporter implements CsvBillImporter<MeiTuanRecord> {
     }
 
     @Override
-    public void doImportFile(Path path) throws Exception {
+    public Platform platform() {
+        return Platform.MEI_TUAN;
+    }
+
+    @Override
+    public List<Transaction> doImportFile(Path path) throws Exception {
         var headers = Arrays.stream("交易创建时间\t交易成功时间\t交易类型\t订单标题\t收/支\t支付方式\t订单金额\t实付金额\t交易单号\t商家单号\t备注".split("\t")).toList();
         var records = importCsv(headers, path);
-        converter.convert(records, new HashMap<>());
+        return converter.convert(records, new HashMap<>());
     }
 
     @Override
