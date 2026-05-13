@@ -20,7 +20,7 @@ public abstract class WechatImporter implements BillImporter {
 
     @Override
     public Platform platform() {
-        return Platform.WE_CHAT;
+        return Platform.WECHAT;
     }
 
     @Override

@@ -1,9 +1,12 @@
 {
   "assets": {
     "余额宝": "Assets:Alipay:Yuebao",
+    "苹果支付": "Assets:Wallet:ApplePay",
     "账户余额": "Assets:Alipay:Yue",
     "余额": "Assets:Alipay:Yue",
     "招商银行(5407)": "Assets:Card:CMB:2459",
+    "北京银行储蓄卡(9538)": "Assets:Card:BOB:9538",
+    "中国银行储蓄卡(4801)": "Assets:Card:BOC:4801",
     "中信银行储蓄卡(6659)": "Assets:Card:CITIC:6659",
     "浦发银行储蓄卡(3009)": "Assets:Card:SPD:3009",
     "招商银行储蓄卡(2459)": "Assets:Card:CMB:2459",
@@ -54,6 +57,7 @@
     "北京动物园": "Expenses:CultureLeisure",
     "蟒山国家森林公园": "Expenses:CultureLeisure",
     "亚马逊电子书包月服务": "Expenses:CultureLeisure:Books",
+    "图书文娱": "Expenses:CultureLeisure:Books",
     "日用百货": "Expenses:DailyNecessities",
     "美宜佳": "Expenses:DailyNecessities",
     "象房商亭": "Expenses:DailyNecessities",
@@ -349,6 +353,8 @@
     "XTOM": "Expenses:CloudService",
     "GiftCard": "Expenses:CloudService",
     "转账备注": "Expenses:Other",
+    "美妆个护": "Expenses:BeautyPersonalCare",
+    "思莱宜U型枕脖子u型枕旅行飞机便携汽车长途办公室午睡枕护颈枕靠枕": "Expenses:BeautyPersonalCare",
     "淘宝平台商户": "Expenses:Other",
     "转账备注:微信转账": "Expenses:Other",
     "光辉岁月": "Expenses:Other",
@@ -366,13 +372,16 @@
   },
   "income": {
     "微信红包": "Income:RedPacket:WeChat",
-    "余额宝": "Income:Investment:YueBao"
+    "余额宝": "Income:Investment:YueBao",
+    "笔笔返现": "Income:JD:Cashback"
   },
   "liabilities": {
     "渤海银行信用购": "Liabilities:CreditPay:Alipay:HuaBei",
     "花呗": "Liabilities:CreditPay:Alipay:HuaBei",
     "中信银行(7661)": "Liabilities:CreditCard:CITIC:7661",
     "广发银行信用卡(2893)": "Liabilities:CreditCard:CGB:2893",
+    "京东白条": "Liabilities:CreditCard:JD",
+    "白条": "Liabilities:CreditCard:JD",
     "中信银行信用卡(7661)": "Liabilities:CreditCard:CITIC:7661",
     "浦发银行信用卡(0083)": "Liabilities:CreditCard:SPD:0083",
     "浦发银行信用卡(3879)": "Liabilities:CreditCard:SPD:3879",

@@ -51,7 +51,7 @@ public class MeiTuanCsvImporter implements CsvBillImporter<MeiTuanRecord> {
 
     @Override
     public Platform platform() {
-        return Platform.MEI_TUAN;
+        return Platform.MEITUAN;
     }
 
     @Override

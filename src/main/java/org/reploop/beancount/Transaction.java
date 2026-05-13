@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static java.util.Objects.nonNull;
@@ -86,5 +87,16 @@ public class Transaction {
             }
         }
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Transaction that)) return false;
+        return Objects.equals(dateTime, that.dateTime) && Objects.equals(payee, that.payee) && Objects.equals(narration, that.narration);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dateTime, payee, narration);
     }
 }

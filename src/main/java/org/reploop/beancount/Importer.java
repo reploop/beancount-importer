@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,8 +28,8 @@ import static java.nio.file.StandardOpenOption.WRITE;
 public class Importer {
     public static void main(String... args) {
         var billImporters = getBillImporters().stream().collect(Collectors.groupingBy(BillImporter::platform, Collectors.toList()));
-        Path scanDir = Paths.get("/Users/gc/Downloads/bills");
-        Path outDir = Paths.get("/Users/gc/Downloads/bills");
+        Path scanDir = Paths.get("/Users/george/personal-projects/beancount/bills");
+        Path outDir = Paths.get("/Users/george/personal-projects/beancount/beans");
 
         DateTimeFormatter yearMonth = DateTimeFormatter.ofPattern("yyyy_MM");
         try (var s = Files.find(scanDir, Integer.MAX_VALUE, (p, attrs) -> Files.isReadable(p))) {
@@ -47,7 +48,7 @@ public class Importer {
                 var monthList = transactions.stream()
                         .sorted(Comparator.comparing(Transaction::getDateTime).reversed())
                         .distinct()
-                        .collect(Collectors.groupingBy(txn -> txn.getDateTime().format(yearMonth), Collectors.toList()));
+                        .collect(Collectors.groupingBy(txn -> txn.getDateTime().toLocalDate().withDayOfMonth(1), Collectors.toList()));
                 output(outDir, platform, monthList);
             });
         } catch (IOException e) {
@@ -55,10 +56,19 @@ public class Importer {
         }
     }
 
-    private static void output(Path dir, Platform platform, Map<String, List<Transaction>> txnList) {
+    private static void makeParentDirectories(Path path) {
+        try {
+            Files.createDirectories(path.getParent());
+        } catch (IOException e) {
+            throw new RuntimeException(path.toString(), e);
+        }
+    }
+
+    private static void output(Path dir, Platform platform, Map<LocalDate, List<Transaction>> txnList) {
         txnList.forEach((ym, list) -> {
-            String filename = platform.name().toLowerCase() + "_" + ym + ".beancount";
-            var path = dir.resolve(filename);
+            String filename = platform.name().toLowerCase() + "_" + ym.getMonthValue() + ".beancount";
+            var path = dir.resolve(String.valueOf(ym.getYear())).resolve(filename);
+            makeParentDirectories(path);
             try (var writer = Files.newBufferedWriter(path, UTF_8, CREATE, TRUNCATE_EXISTING, WRITE)) {
                 for (var txn : list) {
                     writer.write(txn.toString());
@@ -76,6 +86,6 @@ public class Importer {
         WechatXlsxImporter xlsxImporter = new WechatXlsxImporter();
         MeiTuanCsvImporter mtCsvImporter = new MeiTuanCsvImporter();
         JdCsvImporter jdImporter = new JdCsvImporter();
-        return List.of(alipayImporter, mtCsvImporter);
+        return List.of(alipayImporter, mtCsvImporter, jdImporter, xlsxImporter, csvImporter, jdImporter);
     }
 }
