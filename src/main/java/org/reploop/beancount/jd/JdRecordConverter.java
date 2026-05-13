@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.reploop.beancount.jd.JdConstants.REVERSE_PATTERN;
 
 public class JdRecordConverter extends AbstractRecordConverter<JdRecord> {
@@ -49,7 +50,13 @@ public class JdRecordConverter extends AbstractRecordConverter<JdRecord> {
         if (nonNull(amountText) && Type.EXPENSE == r.getType()) {
             var m = REVERSE_PATTERN.matcher(amountText);
             if (m.find()) {
-                var reverseAmount = new BigDecimal(m.group(2));
+                // 1: amount; 2: 全额; 3: reverse amount
+                var fullRefund = trimToEmpty(m.group(2));
+                var refundAmount = trimToEmpty(m.group(3));
+                if (!fullRefund.isEmpty() && refundAmount.isEmpty()) {
+                    refundAmount = m.group(1);
+                }
+                var reverseAmount = new BigDecimal(refundAmount);
                 reverseMap.put(new StringReverseKey(r.getOrder()), new JdReverseContext(txn, reverseAmount));
             }
         }
