@@ -1,6 +1,7 @@
 package org.reploop.beancount.wechat;
 
 import org.reploop.beancount.BillImporter;
+import org.reploop.beancount.Platform;
 import org.reploop.beancount.ReverseContext;
 import org.reploop.beancount.ReverseKey;
 import org.reploop.beancount.Transaction;
@@ -15,6 +16,11 @@ public abstract class WechatImporter implements BillImporter {
 
     public List<Transaction> convert(List<WechatRecord> records, Map<ReverseKey, ReverseContext> reverseTransactions) throws Exception {
         return converter.convert(records, reverseTransactions);
+    }
+
+    @Override
+    public Platform platform() {
+        return Platform.WE_CHAT;
     }
 
     @Override

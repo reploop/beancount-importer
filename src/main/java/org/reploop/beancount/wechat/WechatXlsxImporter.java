@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.reploop.beancount.Point;
+import org.reploop.beancount.Transaction;
 import org.reploop.beancount.Type;
 import org.reploop.beancount.XlsxBillImporter;
 
@@ -78,10 +79,9 @@ public class WechatXlsxImporter extends WechatImporter implements XlsxBillImport
     }
 
     @Override
-    public void doImportFile(Path path) throws Exception {
+    public List<Transaction> doImportFile(Path path) throws Exception {
         var records = importXlsx(path);
-        convert(records, new LinkedHashMap<>());
-
+        return convert(records, new LinkedHashMap<>());
     }
 
     @Override
