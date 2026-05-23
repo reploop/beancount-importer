@@ -113,9 +113,6 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
                 reverse(r, txn, reverses);
             }
         }
-        for (var txn : transactions) {
-            System.out.println(txn);
-        }
         return transactions;
     }
 
