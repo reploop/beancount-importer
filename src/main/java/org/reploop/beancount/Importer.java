@@ -2,6 +2,7 @@ package org.reploop.beancount;
 
 import lombok.extern.slf4j.Slf4j;
 import org.reploop.beancount.alipay.AlipayImporter;
+import org.reploop.beancount.alipay.AlipayLegacyImporter;
 import org.reploop.beancount.jd.JdCsvImporter;
 import org.reploop.beancount.meituan.MeiTuanCsvImporter;
 import org.reploop.beancount.wechat.WechatCsvImporter;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -57,12 +59,21 @@ public class Importer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        includes.forEach((pf, paths) -> {
-            System.out.println("; " + pf);
-            paths.forEach(path -> {
-                String cmd = "include \"" + path.toString() + "\"";
-                System.out.println(cmd);
-            });
+        var yearPaths = includes.values().stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.groupingBy(p -> p.getParent().getParent(), LinkedHashMap::new, Collectors.toList()));
+
+        yearPaths.forEach((year, paths) -> {
+            var f = outDir.resolve(year).resolve("index.beancount");
+            try (var writer = Files.newBufferedWriter(f)) {
+                for (var path : paths) {
+                    String cmd = "include \"" + path.subpath(year.getNameCount(), path.getNameCount()) + "\"";
+                    writer.write(cmd);
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 
@@ -77,8 +88,10 @@ public class Importer {
     private static Map<Platform, List<Path>> output(Path dir, Platform platform, Map<LocalDate, List<Transaction>> txnList) {
         Map<Platform, List<Path>> filenames = new TreeMap<>();
         txnList.forEach((ym, list) -> {
-            String filename = platform.name().toLowerCase() + "_" + ym.getMonthValue() + ".beancount";
-            Path f = Path.of("beans", String.valueOf(ym.getYear()), filename);
+            var pn = platform.name().toLowerCase();
+            String filename = pn + "_" + ym.getMonthValue() + ".beancount";
+            // year/platform/platform_month.beancount
+            Path f = Path.of("beans", String.valueOf(ym.getYear()), pn, filename);
             var path = dir.resolve(f);
             makeParentDirectories(path);
             try (var writer = Files.newBufferedWriter(path, UTF_8, CREATE, TRUNCATE_EXISTING, WRITE)) {
@@ -96,10 +109,11 @@ public class Importer {
 
     private static List<BillImporter> getBillImporters() {
         AlipayImporter alipayImporter = new AlipayImporter();
+        AlipayLegacyImporter legacyImporter = new AlipayLegacyImporter();
         WechatCsvImporter csvImporter = new WechatCsvImporter();
         WechatXlsxImporter xlsxImporter = new WechatXlsxImporter();
         MeiTuanCsvImporter mtCsvImporter = new MeiTuanCsvImporter();
         JdCsvImporter jdImporter = new JdCsvImporter();
-        return List.of(mtCsvImporter, alipayImporter, csvImporter, xlsxImporter, jdImporter);
+        return List.of(mtCsvImporter, alipayImporter, legacyImporter, csvImporter, xlsxImporter, jdImporter);
     }
 }

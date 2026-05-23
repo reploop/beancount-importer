@@ -44,7 +44,7 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
                     .flag(Flag.CLOSED)
                     .dateTime(r.getCreatedAt())
                     .narration(r.getGoods())
-                    .meta(Map.of("date", dateTime.toLocalDate(), "time", dateTime.toLocalTime()));
+                    .meta(Map.of("time", dateTime.toLocalTime()));
             BigDecimal amount = r.getAmount();
             var type = r.getType();
             if (Type.EXPENSE == type) {
@@ -109,9 +109,7 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
             builder.postings(List.of(myPosting, peerPosting));
             var txn = builder.build();
             transactions.add(txn);
-            if (Type.EXPENSE == type) {
-                reverse(r, txn, reverses);
-            }
+            reverse(r, txn, reverses);
         }
         return transactions;
     }

@@ -21,6 +21,7 @@ public abstract class BillHandler<R> extends DefaultHandler {
     private final Map<Integer, BiConsumer<R, String>> setters;
     private R record;
     private int index = 0;
+
     public BillHandler(List<R> records, List<String> headers, Map<Integer, BiConsumer<R, String>> setters) {
         this.records = records;
         this.setters = setters;
@@ -40,11 +41,13 @@ public abstract class BillHandler<R> extends DefaultHandler {
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         var text = new String(ch, start, length).trim();
-        var header = headers.get(index);
-        if (!Objects.equals(header, text) && nonNull(record)) {
-            BiConsumer<R, String> consumer = setters.get(index);
-            if (nonNull(consumer)) {
-                consumer.accept(record, text);
+        if (index < headers.size()) {
+            var header = headers.get(index);
+            if (!Objects.equals(header, text) && nonNull(record)) {
+                BiConsumer<R, String> consumer = setters.get(index);
+                if (nonNull(consumer)) {
+                    consumer.accept(record, text);
+                }
             }
         }
     }

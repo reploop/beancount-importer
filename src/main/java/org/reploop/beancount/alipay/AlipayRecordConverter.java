@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class AlipayRecordConverter extends AbstractRecordConverter<AlipayRecord> {
 
@@ -30,7 +31,7 @@ public class AlipayRecordConverter extends AbstractRecordConverter<AlipayRecord>
     @Override
     protected boolean test(AlipayRecord r) {
         // not paid
-        return nonNull(r.getMethod()) && (Type.NOT_APPLICABLE != r.getType() || !Objects.equals("交易关闭", r.getStatus()));
+        return isNotBlank(r.getMethod()) && (Type.NOT_APPLICABLE != r.getType() || !Objects.equals("交易关闭", r.getStatus()));
     }
 
     @Override
@@ -75,6 +76,8 @@ public class AlipayRecordConverter extends AbstractRecordConverter<AlipayRecord>
 
     @Override
     protected void reverse(AlipayRecord r, Transaction txn, Map<ReverseKey, ReverseContext> reverseMap) {
-        reverseMap.put(new StringReverseKey(r.getOrder()), new TxnReverseContext(txn));
+        if (Type.EXPENSE == r.getType()) {
+            reverseMap.put(new StringReverseKey(r.getOrder()), new TxnReverseContext(txn));
+        }
     }
 }

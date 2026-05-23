@@ -4,14 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.reploop.beancount.BillHandler;
 import org.reploop.beancount.BillImporter;
 import org.reploop.beancount.CsvBillImporter;
+import org.reploop.beancount.LocalDateTimeUtils;
 import org.reploop.beancount.Platform;
 import org.reploop.beancount.Transaction;
 import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,12 +31,7 @@ public class AlipayImporter implements BillImporter, CsvBillImporter<AlipayRecor
     @Override
     public BiConsumer<AlipayRecord, String> setter(int idx, String name) {
         return switch (idx) {
-            case 0 -> (record, s) -> {
-                try {
-                    record.setCreatedAt(LocalDateTime.parse(s, formatter));
-                } catch (DateTimeParseException ignored) {
-                }
-            };
+            case 0 -> (record, s) -> record.setCreatedAt(LocalDateTimeUtils.parseQuietly(s, formatter));
             case 1 -> AlipayRecord::setCategory;
             case 2 -> AlipayRecord::setPeer;
             case 3 -> AlipayRecord::setPeerAccount;

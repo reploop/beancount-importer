@@ -8,15 +8,15 @@ import org.reploop.beancount.Type;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class AlipayOldImporter implements CsvBillImporter<AlipayRecord> {
+import static org.reploop.beancount.LocalDateTimeUtils.parseQuietly;
+
+public class AlipayLegacyImporter implements CsvBillImporter<AlipayRecord> {
     private final AlipayRecordConverter converter = new AlipayRecordConverter();
 
     public List<Transaction> importCsv(Path path) throws Exception {
@@ -28,12 +28,7 @@ public class AlipayOldImporter implements CsvBillImporter<AlipayRecord> {
     @Override
     public BiConsumer<AlipayRecord, String> setter(int idx, String name) {
         return switch (idx) {
-            case 10 -> (record, s) -> {
-                try {
-                    record.setCreatedAt(LocalDateTime.parse(s, formatter));
-                } catch (DateTimeParseException ignored) {
-                }
-            };
+            case 10 -> (record, s) -> record.setCreatedAt(parseQuietly(s, formatter));
             case 7 -> AlipayRecord::setCategory;
             case 1 -> AlipayRecord::setPeer;
             case 2 -> AlipayRecord::setPeerAccount;
@@ -45,14 +40,14 @@ public class AlipayOldImporter implements CsvBillImporter<AlipayRecord> {
             case 8 -> AlipayRecord::setOrder;
             case 9 -> AlipayRecord::setMerchantOrder;
             case 11 -> AlipayRecord::setRemarks;
-            default -> throw new IllegalStateException();
+            default -> throw new IllegalStateException(name);
         };
     }
 
     @Override
     public boolean support(Path path) {
         var filename = path.getFileName().toString();
-        return (filename.startsWith("alipay_") || filename.startsWith("支付宝")) && filename.endsWith(".csv");
+        return filename.startsWith("alipay_") && filename.endsWith(".csv");
     }
 
     @Override

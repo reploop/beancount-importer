@@ -48,7 +48,7 @@ public class JdRecordConverter extends AbstractRecordConverter<JdRecord> {
     protected void reverse(JdRecord r, Transaction txn, Map<ReverseKey, ReverseContext> reverseMap) {
         // Reverse Txn
         var amountText = r.getAmountText();
-        if (nonNull(amountText) && Type.EXPENSE == r.getType()) {
+        if (nonNull(amountText)) {
             var m = REVERSE_PATTERN.matcher(amountText);
             if (m.find()) {
                 // 1: amount; 2: 全额; 3: reverse amount
