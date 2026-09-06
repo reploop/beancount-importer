@@ -14,7 +14,6 @@ import static java.util.Objects.nonNull;
 public abstract class BillHandler<R> extends DefaultHandler {
     private static final String TD = "td";
     private static final String TR = "tr";
-    private static final String TABLE = "table";
 
     private final List<R> records;
     private final List<String> headers;
@@ -29,7 +28,7 @@ public abstract class BillHandler<R> extends DefaultHandler {
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if (TR.equals(qName)) {
             record = newInstance();
             index = 0;
@@ -39,7 +38,7 @@ public abstract class BillHandler<R> extends DefaultHandler {
     protected abstract R newInstance();
 
     @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
+    public void characters(char[] ch, int start, int length) {
         var text = new String(ch, start, length).trim();
         if (index < headers.size()) {
             var header = headers.get(index);
@@ -57,7 +56,7 @@ public abstract class BillHandler<R> extends DefaultHandler {
     }
 
     @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(String uri, String localName, String qName) {
         switch (qName) {
             case TR -> {
                 if (index >= setters.size() && validate(record)) {

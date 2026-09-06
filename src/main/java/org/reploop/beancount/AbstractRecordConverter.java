@@ -30,7 +30,7 @@ public abstract class AbstractRecordConverter<R extends BillRecord> implements R
     }
 
     @Override
-    public List<Transaction> convert(List<R> records, Map<ReverseKey, ReverseContext> reverses) throws Exception {
+    public List<Transaction> convert(List<R> records, Map<ReverseKey, ReverseContext> reverses) {
         var transactions = new ArrayList<Transaction>();
         var list = records.stream().sorted(Comparator.comparing(R::getCreatedAt)).toList();
         for (var r : list) {

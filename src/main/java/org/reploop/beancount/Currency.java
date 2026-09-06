@@ -1,5 +1,5 @@
 package org.reploop.beancount;
 
 public enum Currency {
-    CNY, HKD, USD
+    CNY, HKD, USD, AUD
 }

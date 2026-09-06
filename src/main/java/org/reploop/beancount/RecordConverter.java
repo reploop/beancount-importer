@@ -8,7 +8,7 @@ import java.util.Map;
 import static java.util.Objects.nonNull;
 
 public interface RecordConverter<R extends BillRecord> {
-    List<Transaction> convert(List<R> records, Map<ReverseKey, ReverseContext> reverseTransactions) throws Exception;
+    List<Transaction> convert(List<R> records, Map<ReverseKey, ReverseContext> reverseTransactions);
 
     default List<String> segment(String val) {
         return segment(val, Comparator.comparing(String::length).reversed());
