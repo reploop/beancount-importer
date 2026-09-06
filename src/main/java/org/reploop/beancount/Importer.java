@@ -29,7 +29,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 
 @Slf4j
 public class Importer {
-    public static void main(String... args) {
+    static void main(String... args) {
         var billImporters = getBillImporters().stream().collect(Collectors.groupingBy(BillImporter::platform, Collectors.toList()));
         Path scanDir = Paths.get("/Users/george/personal-projects/beancount/bills");
         Path outDir = Paths.get("/Users/george/personal-projects/beancount");

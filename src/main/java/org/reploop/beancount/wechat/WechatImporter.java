@@ -14,7 +14,7 @@ public abstract class WechatImporter implements BillImporter {
 
     private final WechatRecordConverter converter = new WechatRecordConverter();
 
-    public List<Transaction> convert(List<WechatRecord> records, Map<ReverseKey, ReverseContext> reverseTransactions) throws Exception {
+    public List<Transaction> convert(List<WechatRecord> records, Map<ReverseKey, ReverseContext> reverseTransactions) {
         return converter.convert(records, reverseTransactions);
     }
 

@@ -16,7 +16,7 @@ public class MeiTuanRecordConverter extends AbstractRecordConverter<MeiTuanRecor
             goods = goods.substring(0, goods.length() - SUFFIX.length()).trim();
             r.setGoods(goods);
         }
-        var payee = segment(goods, null).get(0);
+        var payee = segment(goods, null).getFirst();
         r.setPeer(payee);
     }
 
